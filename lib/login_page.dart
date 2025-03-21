@@ -1,15 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'home_page.dart';
 import 'forgot_password.dart';
-import 'sign_up_page.dart'; // Importing SignUpPage
+import 'sign_up_page.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  void _login() {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    if (email == "test@gmail.com" && password == "123") {
+      // Navigate to HomePage if login is successful
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } else {
+      // Show error message if credentials are incorrect
+      _showErrorDialog("Invalid email or password. Please try again.");
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Login Failed"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set background color to white
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -32,6 +73,7 @@ class LoginPage extends StatelessWidget {
 
             // Email TextField
             TextField(
+              controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(
@@ -45,6 +87,7 @@ class LoginPage extends StatelessWidget {
 
             // Password TextField
             TextField(
+              controller: passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
@@ -69,7 +112,8 @@ class LoginPage extends StatelessWidget {
                 TextButton(
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordPage()),
                   ),
                   child: const Text(
                     'Forgot Password?',
@@ -82,7 +126,7 @@ class LoginPage extends StatelessWidget {
 
             // Login Button
             ElevatedButton(
-              onPressed: () {},
+              onPressed: _login,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF181F6C),
                 minimumSize: const Size(double.infinity, 48),
@@ -90,7 +134,8 @@ class LoginPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              child: const Text('Login', style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: const Text('Login',
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
             const SizedBox(height: 20),
 

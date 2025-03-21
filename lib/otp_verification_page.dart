@@ -1,12 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import '../services/api_service.dart';
+import 'account_created_page.dart';
 import 'create_account.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class OTPVerificationPage extends StatelessWidget {
+class OTPVerificationPage extends StatefulWidget {
   final String email;
-  final TextEditingController otpController = TextEditingController();
 
-  OTPVerificationPage({super.key, required this.email});
+  const OTPVerificationPage({super.key, required this.email});
+
+  @override
+  OTPVerificationPageState createState() => OTPVerificationPageState();
+}
+
+class OTPVerificationPageState extends State<OTPVerificationPage> {
+  final TextEditingController otpController = TextEditingController();
+  bool isLoading = false;
+
+  void verifyOTP() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await ApiService.verifyOTPUser(
+        otpController.text.trim(),
+        widget.email,
+      );
+
+      if (!mounted) return;
+
+      if (response['resultKey'] == 1) {
+        // ✅ OTP is correct, navigate to Account Created page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AccountCreatedPage()),
+        );
+      } else {
+        // ❌ Show error message if OTP is incorrect
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? 'Invalid OTP')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +81,7 @@ class OTPVerificationPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              'OTP has been sent to your email: $email',
+              'OTP has been sent to your email: ${widget.email}',
               style: TextStyle(fontSize: 16, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
@@ -60,7 +109,7 @@ class OTPVerificationPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CreateAccountPage(email: email)),
+                        builder: (context) => CreateAccountPage(email: widget.email)),
 
                   );
                 } else {
@@ -91,7 +140,7 @@ class OTPVerificationPage extends StatelessWidget {
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text("OTP Resent to $email"),
+                    content: Text("OTP Resent to ${widget.email}"),
                     backgroundColor: Colors.blue,
                   ),
                 );

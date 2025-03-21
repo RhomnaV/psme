@@ -1,12 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import '../services/api_service.dart';
 import 'otp_verification_page.dart';
 import 'login_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class SignUpPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
-  SignUpPage({super.key});
+  @override
+  SignUpPageState createState() => SignUpPageState();
+}
+
+class SignUpPageState extends State<SignUpPage> {
+final TextEditingController emailController = TextEditingController();
+  bool isLoading = false;
+
+  Future<void> sendOTP() async {
+    if (!mounted) return;
+
+    final email = emailController.text.trim();
+    if (email.isEmpty) {
+      debugPrint("⚠️ No email entered!");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter an email.')),
+      );
+      return;
+    }
+
+    debugPrint("📩 Sending OTP to: $email");
+    setState(() => isLoading = true);
+
+    try {
+      final response = await ApiService.sendOTPUser(email);
+      debugPrint("✅ OTP Response: $response");
+
+      if (!mounted) return;
+
+      if (response['resultKey'] == 1) {
+        debugPrint("🚀 OTP Sent Successfully! Navigating to OTP Verification Page.");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OTPVerificationPage(email: email),
+          ),
+        );
+      } else {
+        debugPrint("❌ OTP Sending Failed: ${response['message']}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? 'Failed to send OTP')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      debugPrint("🔥 Error occurred while sending OTP: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,17 +103,10 @@ class SignUpPage extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Sign Up Button
-            ElevatedButton(
-              onPressed: () {
+         ElevatedButton(
+              onPressed: () async {
                 if (emailController.text.isNotEmpty) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OTPVerificationPage(
-                        email: emailController.text,
-                      ),
-                    ),
-                  );
+                  await sendOTP(); // Trigger sendOTP function
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

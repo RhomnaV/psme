@@ -57,12 +57,7 @@ flutter:
     - assets/logo.png
     - assets/psme-overview.png
     - assets/psme-overview2.png
-  fonts:
-    - family: Poppins
-      fonts:
-        - asset: assets/fonts/Poppins-Regular.ttf
-        - asset: assets/fonts/Poppins-Bold.ttf
-          weight: 700
+
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

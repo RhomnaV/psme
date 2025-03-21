@@ -5,7 +5,7 @@ import 'account_created_page.dart';
 class CreateAccountPage extends StatelessWidget {
   final String email;
 
-  CreateAccountPage({required this.email});
+  const CreateAccountPage({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {

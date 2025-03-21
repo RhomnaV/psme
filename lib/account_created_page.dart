@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'login_page.dart'; // Import the login page
 
 class AccountCreatedPage extends StatelessWidget {
+  const AccountCreatedPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

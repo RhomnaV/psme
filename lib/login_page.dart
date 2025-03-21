@@ -4,6 +4,8 @@ import 'forgot_password.dart';
 import 'sign_up_page.dart'; // Importing SignUpPage
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

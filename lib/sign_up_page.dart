@@ -6,6 +6,8 @@ import 'login_page.dart';
 class SignUpPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
 
+  SignUpPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

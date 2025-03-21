@@ -6,7 +6,7 @@ class OTPVerificationPage extends StatelessWidget {
   final String email;
   final TextEditingController otpController = TextEditingController();
 
-  OTPVerificationPage({required this.email});
+  OTPVerificationPage({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {

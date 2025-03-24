@@ -15,54 +15,73 @@ class SignUpPageState extends State<SignUpPage> {
 final TextEditingController emailController = TextEditingController();
   bool isLoading = false;
 
-  Future<void> sendOTP() async {
+Future<void> sendOTP() async {
+  if (!mounted) return;
+
+  final email = emailController.text.trim();
+  if (email.isEmpty) {
+    debugPrint("⚠️ No email entered!");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter an email.')),
+    );
+    return;
+  }
+
+  debugPrint("📩 Sending OTP to: $email");
+  setState(() => isLoading = true);
+
+  try {
+    final response = await ApiService.sendOTPUser(email);
+    debugPrint("✅ OTP Response: $response");
+
     if (!mounted) return;
 
-    final email = emailController.text.trim();
-    if (email.isEmpty) {
-      debugPrint("⚠️ No email entered!");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter an email.')),
-      );
-      return;
-    }
+    if (response['resultKey'] == 1) {
+      final resultValue = response['resultValue'];
 
-    debugPrint("📩 Sending OTP to: $email");
-    setState(() => isLoading = true);
-
-    try {
-      final response = await ApiService.sendOTPUser(email);
-      debugPrint("✅ OTP Response: $response");
-
-      if (!mounted) return;
-
-      if (response['resultKey'] == 1) {
-        debugPrint("🚀 OTP Sent Successfully! Navigating to OTP Verification Page.");
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OTPVerificationPage(email: email),
-          ),
-        );
-      } else {
-        debugPrint("❌ OTP Sending Failed: ${response['message']}");
+      if (resultValue != null && resultValue['isexistmem'] == true) {
+        debugPrint("❌ Email already in use.");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['message'] ?? 'Failed to send OTP')),
+          const SnackBar(content: Text('Email already in use.')),
         );
+        return;
       }
-    } catch (e) {
-      if (!mounted) return;
 
-      debugPrint("🔥 Error occurred while sending OTP: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    } finally {
-      if (mounted) {
-        setState(() => isLoading = false);
+      if (resultValue != null && resultValue['isMailsend'] == false) {
+        debugPrint("❌ OTP sending failed: OTP was not sent.");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('OTP sending failed. Please try again.')),
+        );
+        return;
       }
+
+      debugPrint("🚀 OTP Sent Successfully! Navigating to OTP Verification Page.");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OTPVerificationPage(email: email),
+        ),
+      );
+    } else {
+      debugPrint("❌ OTP Sending Failed: ${response['message']}");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response['message'] ?? 'Failed to send OTP')),
+      );
+    }
+  } catch (e) {
+    if (!mounted) return;
+
+    debugPrint("🔥 Error occurred while sending OTP: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
+  } finally {
+    if (mounted) {
+      setState(() => isLoading = false);
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

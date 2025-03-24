@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   // GET Request
@@ -14,19 +15,68 @@ class ApiService {
   //   }
   // }
 
-  // POST Request (Login)
+  // POST Request
   static Future<Map<String, dynamic>> loginUser(String email, String password) async {
     final response = await http.post(
       Uri.parse(login),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password}),
+      body: jsonEncode({
+        "username": email,
+        "password": password,
+        "isadminuser": false,
+      }),
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+      if (responseData['success'] == true) {
+        await _setSession(responseData);
+        return responseData;
+      } else {
+        throw Exception(responseData['message'] ?? 'Login failed');
+      }
     } else {
-      throw Exception('Login failed');
+      throw Exception('Login failed with status code: ${response.statusCode}');
     }
+  }
+
+  // Save session data in SharedPreferences
+  static Future<void> _setSession(Map<String, dynamic> userData) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    
+    await prefs.setString('access_token', userData['access_token'] ?? '');
+    await prefs.setString('token_type', userData['token_type'] ?? '');
+    
+    if (userData['userinfo'] != null && userData['userinfo'].isNotEmpty) {
+      await prefs.setString('user', jsonEncode(userData['userinfo'][0]));
+    }
+  }
+
+  // Retrieve session data
+  static Future<Map<String, dynamic>?> getSession() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    
+    final String? token = prefs.getString('access_token');
+    final String? tokenType = prefs.getString('token_type');
+    final String? user = prefs.getString('user');
+
+    if (token != null && user != null) {
+      return {
+        "access_token": token,
+        "token_type": tokenType,
+        "user": jsonDecode(user),
+      };
+    }
+    return null;
+  }
+
+  // Clear session (logout)
+  static Future<void> clearSession() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('access_token');
+    await prefs.remove('token_type');
+    await prefs.remove('user');
   }
 
      static Future<Map<String, dynamic>> sendOTPUser(String email) async {

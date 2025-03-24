@@ -3,47 +3,66 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'home_page.dart';
 import 'forgot_password.dart';
 import 'sign_up_page.dart';
+import '../services/api_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
 
-  void _login() {
+  void _login() async {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    if (email == "test@gmail.com" && password == "123") {
-      // Navigate to HomePage if login is successful
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    } else {
-      // Show error message if credentials are incorrect
-      _showErrorDialog("Invalid email or password. Please try again.");
+    if (email.isEmpty || password.isEmpty) {
+      _showErrorDialog("Please enter email and password.");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final response = await ApiService.loginUser(email, password);
+
+      if (!mounted) return;
+
+      if (response['success'] == true) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      } else {
+        _showErrorDialog(response['message'] ?? "Login failed. Try again.");
+      }
+    } catch (e) {
+      _showErrorDialog("Error: $e");
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Login Failed"),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -125,8 +144,8 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
 
             // Login Button
-            ElevatedButton(
-              onPressed: _login,
+           ElevatedButton(
+              onPressed: isLoading ? null : _login, // Disable button when loading
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF181F6C),
                 minimumSize: const Size(double.infinity, 48),
@@ -134,8 +153,19 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              child: const Text('Login',
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    ) // Show a loading indicator
+                  : const Text(
+                      'Login',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
             ),
             const SizedBox(height: 20),
 

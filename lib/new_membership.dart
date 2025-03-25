@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'navbar.dart';
+import 'base_page.dart';
 import 'profession_details.dart';
 
 class NewMembershipPage extends StatefulWidget {
@@ -21,60 +21,43 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const Navbar(userName: "Kevin", membershipType: "Regular Member"),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
+    return BasePage(
+      selectedIndex: 2, // Membership tab
+      body: Container(
+        color: Colors.white, // Ensure white background
+        width: double.infinity,
+        height: double.infinity,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
 
-              // Profile image
-              const CircleAvatar(
-                radius: 40,
-                backgroundColor: Color(0xFFF0F0FF),
-                backgroundImage: AssetImage('assets/profile.jpg'),
-              ),
+                // New Membership title - centered
+                const Text(
+                  'New Membership',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
-              // User name and email
-              const Text(
-                'KEVIN PARK',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'kevin@gmail.com',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-              ),
-
-              const SizedBox(height: 30),
-
-              // New Membership title
-              const Text(
-                'New Membership',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Membership Type dropdown
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: const TextSpan(
-                      text: 'Membership Type',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: ' *',
+                // Membership Type dropdown
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: const [
+                        Text(
+                          'Membership Type',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          ' *',
                           style: TextStyle(
                             color: Colors.red,
                             fontWeight: FontWeight.bold,
@@ -82,192 +65,208 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 40, // Fixed height for consistency
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                            ),
+                            border: InputBorder.none,
+                          ),
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          hint: const Text('Select membership type'),
+                          isExpanded: true,
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'Regular Member',
+                              child: Text('Regular Member'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Student Member',
+                              child: Text('Student Member'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Senior Member',
+                              child: Text('Senior Member'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Life Member',
+                              child: Text('Life Member'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _membershipTypeController.text = value ?? '';
+                            });
+                          },
+                        ),
                       ),
-                    ),
-                    hint: const Text('Select membership type'),
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'Regular Member',
-                        child: Text('Regular Member'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Student Member',
-                        child: Text('Student Member'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Senior Member',
-                        child: Text('Senior Member'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Life Member',
-                        child: Text('Life Member'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _membershipTypeController.text = value ?? '';
-                      });
-                    },
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Chapter dropdown
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Chapter',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    hint: const Text('Select chapter'),
-                    items: const [
-                      DropdownMenuItem(value: 'Manila', child: Text('Manila')),
-                      DropdownMenuItem(value: 'Cebu', child: Text('Cebu')),
-                      DropdownMenuItem(value: 'Davao', child: Text('Davao')),
-                      DropdownMenuItem(
-                        value: 'Marinduque',
-                        child: Text('Marinduque'),
-                      ),
-                    ],
-                    onChanged: (value) {},
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 40),
-
-              // Personal Information section
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Personal Information',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Middle Name field
-                    _buildFormField(
-                      label: 'Middle Name',
-                      hintText: 'Enter your middle name',
-                    ),
-
-                    // Suffix field
-                    _buildFormField(
-                      label: 'Suffix',
-                      hintText: 'E.g., Jr., Sr., III',
-                    ),
-
-                    // Birth Date field
-                    _buildDateField(
-                      label: 'Birth Date',
-                      hintText: 'MM/DD/YYYY',
-                    ),
-
-                    // Mobile Number field
-                    _buildPhoneField(
-                      label: 'Mobile Number',
-                      hintText: 'Enter your mobile number',
                     ),
                   ],
                 ),
-              ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-              // Continue button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Validate form
-                    if (_membershipTypeController.text.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProfessionDetailsPage(),
+                // Chapter dropdown
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: const [
+                        Text(
+                          'Chapter',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      );
-                    } else {
-                      // Show error
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please select a membership type'),
-                          backgroundColor: Colors.red,
+                        Text(
+                          ' *',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A0F44),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 40, // Fixed height for consistency
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                            ),
+                            border: InputBorder.none,
+                          ),
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          hint: const Text('Select chapter'),
+                          isExpanded: true,
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'Manila',
+                              child: Text('Manila'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Cebu',
+                              child: Text('Cebu'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Davao',
+                              child: Text('Davao'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Marinduque',
+                              child: Text('Marinduque'),
+                            ),
+                          ],
+                          onChanged: (value) {},
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Personal Information section - no container, just a title
+                const Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Personal Information',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Middle Name field
+                _buildFormField(
+                  label: 'Middle Name',
+                  hintText: 'Enter your middle name',
+                  required: true,
+                ),
+
+                // Suffix field
+                _buildFormField(
+                  label: 'Suffix',
+                  hintText: 'E.g., Jr., Sr., III',
+                  required: true,
+                ),
+
+                // Birth Date field
+                _buildDateField(
+                  label: 'Birth Date',
+                  hintText: 'MM/DD/YYYY',
+                  required: true,
+                ),
+
+                // Mobile Number field
+                _buildPhoneField(
+                  label: 'Mobile Number',
+                  hintText: 'Enter your mobile number',
+                  required: true,
+                ),
+
+                const SizedBox(height: 24),
+
+                // Next button - yellow color
+                SizedBox(
+                  width: double.infinity,
+                  height: 44, // Smaller height to match design
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Validate form
+                      if (_membershipTypeController.text.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfessionDetailsPage(),
+                          ),
+                        );
+                      } else {
+                        // Show error
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please select a membership type'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFD600), // Yellow color
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: const Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  child: const Text('CONTINUE'),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.grey.shade300, width: 1),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-            ],
+
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
@@ -281,44 +280,52 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
     bool required = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RichText(
-            text: TextSpan(
-              text: label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+          Row(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
               ),
-              children:
-                  required
-                      ? const [
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ]
-                      : [],
-            ),
+              if (required)
+                const Text(
+                  ' *',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
           ),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: hintText,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+          const SizedBox(height: 6),
+          Container(
+            height: 40, // Fixed height for consistency
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: TextFormField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: hintText,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ), // Adjusted vertical padding
+                border: InputBorder.none,
+                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                isDense: true, // Makes the input field more compact
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
+              style: const TextStyle(fontSize: 14),
+              textAlignVertical:
+                  TextAlignVertical.center, // Center text vertically
             ),
           ),
         ],
@@ -333,59 +340,61 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
     bool required = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RichText(
-            text: TextSpan(
-              text: label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+          Row(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
               ),
-              children:
-                  required
-                      ? const [
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ]
-                      : [],
-            ),
+              if (required)
+                const Text(
+                  ' *',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
           ),
-          const SizedBox(height: 8),
-          TextFormField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: hintText,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              suffixIcon: const Icon(Icons.calendar_today, size: 20),
+          const SizedBox(height: 6),
+          Container(
+            height: 40, // Fixed height for consistency
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(4),
             ),
-            readOnly: true,
-            onTap: () async {
-              final DateTime? picked = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-              );
-              if (picked != null && controller != null) {
-                controller.text =
-                    "${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}/${picked.year}";
-              }
-            },
+            child: TextFormField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: hintText,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                border: InputBorder.none,
+                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                suffixIcon: const Icon(Icons.calendar_today, size: 18),
+              ),
+              style: const TextStyle(fontSize: 14),
+              readOnly: true,
+              onTap: () async {
+                final DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                );
+                if (picked != null && controller != null) {
+                  controller.text =
+                      "${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}/${picked.year}";
+                }
+              },
+            ),
           ),
         ],
       ),
@@ -399,74 +408,79 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
     bool required = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RichText(
-            text: TextSpan(
-              text: label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+          Row(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
               ),
-              children:
-                  required
-                      ? const [
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ]
-                      : [],
-            ),
+              if (required)
+                const Text(
+                  ' *',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Row(
             children: [
               // Country code dropdown
               Container(
-                width: 100,
+                width: 80,
+                height: 40, // Fixed height for consistency
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<String>(
-                      value: '+63',
-                      items: const [
-                        DropdownMenuItem(value: '+63', child: Text('+63')),
-                        DropdownMenuItem(value: '+1', child: Text('+1')),
-                        DropdownMenuItem(value: '+44', child: Text('+44')),
-                      ],
-                      onChanged: (String? value) {},
-                      icon: const Icon(Icons.arrow_drop_down),
-                      isExpanded: true,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 24,
+                      height: 16,
+                      margin: const EdgeInsets.only(left: 8),
+                      color: Colors.red, // Red flag for Philippines
                     ),
-                  ),
+                    const SizedBox(width: 4),
+                    const Text('+62', style: TextStyle(fontSize: 14)),
+                    const Icon(Icons.keyboard_arrow_down, size: 16),
+                  ],
                 ),
               ),
               const SizedBox(width: 8),
               // Phone number field
               Expanded(
-                child: TextFormField(
-                  controller: controller,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    hintText: hintText,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  height: 40, // Fixed height for consistency
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: TextFormField(
+                    controller: controller,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      hintText: hintText,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                      ),
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 14,
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ),
               ),

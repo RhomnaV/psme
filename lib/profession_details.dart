@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'navbar.dart';
+import 'base_page.dart';
 import 'prc_license.dart';
+import 'psme_id.dart';
 
 class ProfessionDetailsPage extends StatefulWidget {
   const ProfessionDetailsPage({super.key});
@@ -10,271 +11,244 @@ class ProfessionDetailsPage extends StatefulWidget {
 }
 
 class _ProfessionDetailsPageState extends State<ProfessionDetailsPage> {
-  // Form controllers
-  final _prcLicenseController = TextEditingController();
-  final _boardExamController = TextEditingController();
-  final _sideNumberController = TextEditingController();
+  // Selected option
+  String? _selectedOption;
+
+  // Series number controller for BSME Board Passer
+  final _seriesNumberController = TextEditingController();
 
   @override
   void dispose() {
-    _prcLicenseController.dispose();
-    _boardExamController.dispose();
-    _sideNumberController.dispose();
+    _seriesNumberController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const Navbar(userName: "Kevin", membershipType: "Regular Member"),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
+    return BasePage(
+      selectedIndex: 2, // Membership tab
+      body: Container(
+        color: Colors.white, // Ensure white background
+        width: double.infinity,
+        height: double.infinity,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
 
-              // Profile image
-              const CircleAvatar(
-                radius: 40,
-                backgroundColor: Color(0xFFF0F0FF),
-                backgroundImage: AssetImage('assets/profile.jpg'),
-              ),
+                // Profession Details title
+                const Text(
+                  'Profession Details',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 24),
 
-              // User name and email
-              const Text(
-                'KEVIN PARK',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'kevin@gmail.com',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-              ),
+                // With PRC License option
+                _buildOptionCard(
+                  title: 'With PRC License',
+                  isSelected: _selectedOption == 'With PRC License',
+                  onTap: () {
+                    setState(() {
+                      _selectedOption = 'With PRC License';
+                    });
+                  },
+                ),
 
-              const SizedBox(height: 30),
+                const SizedBox(height: 12),
 
-              // Profession Details title
-              const Text(
-                'Profession Details',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+                // Most Recent BSME Board Passer option
+                _buildOptionCard(
+                  title: 'Most Recent BSME Board Passer',
+                  isSelected:
+                      _selectedOption == 'Most Recent BSME Board Passer',
+                  onTap: () {
+                    setState(() {
+                      _selectedOption = 'Most Recent BSME Board Passer';
+                    });
+                  },
+                ),
 
-              const SizedBox(height: 24),
-
-              // PRC License dropdown
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: const TextSpan(
-                      text: 'PRC License',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                // Series Number field (only shown when Most Recent BSME Board Passer is selected)
+                if (_selectedOption == 'Most Recent BSME Board Passer')
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
+                        Row(
+                          children: const [
+                            Text(
+                              'Series Number',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              ' *',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: TextFormField(
+                            controller: _seriesNumberController,
+                            decoration: const InputDecoration(
+                              hintText: 'Enter series number',
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                            style: const TextStyle(fontSize: 14),
+                            textAlignVertical: TextAlignVertical.center,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    hint: const Text('Select PRC license'),
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'Professional Mechanical Engineer',
-                        child: Text('Professional Mechanical Engineer'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Registered Mechanical Engineer',
-                        child: Text('Registered Mechanical Engineer'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Certified Plant Mechanic',
-                        child: Text('Certified Plant Mechanic'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _prcLicenseController.text = value ?? '';
-                      });
-                    },
-                  ),
-                ],
-              ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 12),
 
-              // Board Exam dropdown
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Board Exam',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    hint: const Text('Select board exam'),
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'Mechanical Engineering Board Exam',
-                        child: Text('Mechanical Engineering Board Exam'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Plant Mechanic Licensure Exam',
-                        child: Text('Plant Mechanic Licensure Exam'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _boardExamController.text = value ?? '';
-                      });
-                    },
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // SISE Graduate field
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'SISE Graduate',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Enter SISE graduate details',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Side Number field
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Side Number',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _sideNumberController,
-                    decoration: InputDecoration(
-                      hintText: 'Enter side number',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 40),
-
-              // Continue button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Validate form
-                    if (_prcLicenseController.text.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PRCLicensePage(),
-                        ),
-                      );
-                    } else {
-                      // Show error
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please select a PRC license'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
+                // BSME Graduate option
+                _buildOptionCard(
+                  title: 'BSME Graduate',
+                  isSelected: _selectedOption == 'BSME Graduate',
+                  onTap: () {
+                    setState(() {
+                      _selectedOption = 'BSME Graduate';
+                    });
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A0F44),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                ),
+
+                const SizedBox(height: 40),
+
+                // Next button - yellow color
+                SizedBox(
+                  width: double.infinity,
+                  height: 44, // Smaller height to match design
+                  child: ElevatedButton(
+                    onPressed:
+                        _selectedOption != null
+                            ? () {
+                              // Validate if series number is required
+                              if (_selectedOption ==
+                                      'Most Recent BSME Board Passer' &&
+                                  _seriesNumberController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Please enter series number'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return;
+                              }
+
+                              // Navigate based on selected option
+                              if (_selectedOption == 'With PRC License') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => const PRCLicensePage(),
+                                  ),
+                                );
+                              } else {
+                                // For BSME Graduate or Most Recent BSME Board Passer
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const PsmeIdPage(),
+                                  ),
+                                );
+                              }
+                            }
+                            : null, // Disable if nothing selected
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFD600), // Yellow color
+                      foregroundColor: Colors.black,
+                      disabledBackgroundColor:
+                          Colors.grey.shade300, // Grey when disabled
+                      disabledForegroundColor: Colors.grey.shade600,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: const Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  child: const Text('CONTINUE'),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
-      bottomNavigationBar: Container(
+    );
+  }
+
+  // Helper method to build option cards
+  Widget _buildOptionCard({
+    required String title,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 50,
         decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.grey.shade300, width: 1),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF1A237E) : Colors.grey.shade300,
+            width: isSelected ? 2 : 1,
           ),
+          borderRadius: BorderRadius.circular(4),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Back', style: TextStyle(color: Colors.grey)),
+        child: Row(
+          children: [
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: Colors.black,
+                ),
               ),
-            ],
-          ),
+            ),
+            if (isSelected)
+              const Padding(
+                padding: EdgeInsets.only(right: 16),
+                child: Icon(
+                  Icons.check_circle,
+                  color: Color(0xFF1A237E),
+                  size: 20,
+                ),
+              ),
+          ],
         ),
       ),
     );

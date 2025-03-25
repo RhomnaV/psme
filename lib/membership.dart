@@ -10,199 +10,162 @@ class MembershipPage extends StatefulWidget {
 }
 
 class _MembershipPageState extends State<MembershipPage> {
-  // Membership status
-  final bool _hasMembership = false;
-
   @override
   Widget build(BuildContext context) {
     return BasePage(
       selectedIndex: 2, // Membership tab
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      body: Container(
+        color: Colors.white, // Explicit white background
+        width: double.infinity,
+        height: double.infinity, // Ensure it fills the entire height
+        child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
-
-              // Profile image
-              const CircleAvatar(
-                radius: 50,
-                backgroundColor: Color(0xFFF0F0FF),
-                backgroundImage: AssetImage('assets/profile.jpg'),
-              ),
-
-              const SizedBox(height: 16),
-
-              // User name and email
-              const Text(
-                'KEVIN PARK',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'kevin@gmail.com',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-              ),
-
-              const SizedBox(height: 40),
-
-              // Membership status
-              Text(
-                'Want to be a member?',
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade800),
-              ),
-
-              const SizedBox(height: 4),
-
-              Text(
-                'Sign up for membership and enjoy the benefits.',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-                textAlign: TextAlign.center,
-              ),
-
-              const SizedBox(height: 24),
-
-              // Join Membership button
-              SizedBox(
+              // Main content with proper spacing
+              Container(
+                color:
+                    Colors
+                        .white, // Additional white background to ensure coverage
                 width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const NewMembershipPage(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A0F44),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text('JOIN MEMBERSHIP'),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // If user already has a membership
-              if (_hasMembership)
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Current Membership',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.green.shade100,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              'Active',
-                              style: TextStyle(
-                                color: Colors.green.shade800,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 30),
+
+                      // Profile image - smaller size to match design
+                      const CircleAvatar(
+                        radius: 30, // Smaller radius
+                        backgroundColor: Colors.white,
+                        backgroundImage: AssetImage('assets/profile.jpg'),
                       ),
+
                       const SizedBox(height: 16),
-                      _buildMembershipInfoItem(
-                        'Membership Type',
-                        'Regular Member',
+
+                      // User name - smaller font size
+                      const Text(
+                        'KEVIN PARK',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                      _buildMembershipInfoItem('Start Date', '01/01/2023'),
-                      _buildMembershipInfoItem('End Date', '12/31/2023'),
-                      _buildMembershipInfoItem('Membership ID', 'MEM-2023-001'),
-                    ],
-                  ),
-                )
-              else
-                // If user doesn't have a membership yet
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.info_outline, color: Colors.grey.shade600),
-                      const SizedBox(width: 12),
-                      Expanded(
+
+                      // Email - smaller and lighter
+                      const Text(
+                        'kevin@gmail.com',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Society text - left aligned in the center column
+                      const Align(
+                        alignment: Alignment.center,
                         child: Text(
-                          'If you already have a membership, you may activate it from your account.',
+                          'New to our society?',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
                           ),
                         ),
                       ),
+
+                      // Membership text - left aligned in the center column
+                      const Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Sign up for a membership and be part of us!',
+                          style: TextStyle(fontSize: 12, color: Colors.black87),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // New Membership button - smaller width
+                      SizedBox(
+                        width: 150, // Smaller width to match design
+                        height: 36, // Explicit height
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NewMembershipPage(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(
+                              0xFF1A237E,
+                            ), // Dark blue
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          child: const Text(
+                            'New Membership',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Already have membership text - center aligned
+                      const Text(
+                        'If you already have a membership, you may activate',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 12, color: Colors.black87),
+                      ),
+                      const Text(
+                        'it in our new system.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 12, color: Colors.black87),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Claim Membership button - smaller width
+                      SizedBox(
+                        width: 150, // Smaller width to match design
+                        height: 36, // Explicit height
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Handle claim membership
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(
+                              0xFFE0E0E0,
+                            ), // Light gray
+                            foregroundColor: Colors.black87,
+                            elevation: 0,
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          child: const Text(
+                            'Claim Membership',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ),
+
+                      // Add extra space at the bottom to ensure white background extends
+                      const SizedBox(height: 100),
                     ],
                   ),
                 ),
-
-              const SizedBox(height: 16),
-
-              // Activate Membership button (only shown if user doesn't have a membership)
-              if (!_hasMembership)
-                TextButton(
-                  onPressed: () {
-                    // Handle activate membership
-                  },
-                  child: const Text(
-                    'Activate Membership',
-                    style: TextStyle(
-                      color: Color(0xFF0A0F44),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildMembershipInfoItem(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-          ),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-        ],
       ),
     );
   }

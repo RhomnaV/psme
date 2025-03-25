@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'navbar.dart';
-import 'membership.dart';
+import 'base_page.dart';
+import 'psme_id.dart';
 
 class PRCLicensePage extends StatefulWidget {
   const PRCLicensePage({super.key});
@@ -106,212 +106,174 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
     );
   }
 
-  void _deleteLicense(int index) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            backgroundColor: Colors.white,
-            title: const Text('Delete License'),
-            content: const Text(
-              'Are you sure you want to delete this license?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _licenses.removeAt(index);
-                  });
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const Navbar(userName: "Kevin", membershipType: "Regular Member"),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
+    return BasePage(
+      selectedIndex: 2, // Membership tab
+      body: Container(
+        color: Colors.white, // Ensure white background
+        width: double.infinity,
+        height: double.infinity,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
 
-              // Profile image
-              const CircleAvatar(
-                radius: 40,
-                backgroundColor: Color(0xFFF0F0FF),
-                backgroundImage: AssetImage('assets/profile.jpg'),
-              ),
-
-              const SizedBox(height: 16),
-
-              // User name and email
-              const Text(
-                'KEVIN PARK',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'kevin@gmail.com',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-              ),
-
-              const SizedBox(height: 30),
-
-              // PRC License title
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'PRC Licenses',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                // Profession Details title
+                const Text(
+                  'Profession Details',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                  InkWell(
-                    onTap: _showAddLicenseDialog,
-                    child: Container(
-                      width: 28,
-                      height: 28,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF0A0F44),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 20,
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 16),
+
+                // PRC License section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'PRC License',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    InkWell(
+                      onTap: _showAddLicenseDialog,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF1A237E),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 4),
 
-              // License cards
-              ..._licenses.asMap().entries.map(
-                (entry) => InkWell(
-                  onTap: () => _showEditLicenseDialog(entry.key),
-                  child: Container(
+                // Subtitle text
+                Text(
+                  'You may add or edit multiple PRC License and check them below',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+
+                const SizedBox(height: 16),
+
+                // License cards
+                ..._licenses.asMap().entries.map(
+                  (entry) => Container(
                     margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                entry.value['type'] ?? '',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${entry.value['number']} • ${entry.value['expiration']}',
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
+                    child: InkWell(
+                      onTap: () => _showEditLicenseDialog(entry.key),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(4),
                         ),
-                        // Delete (trash can) icon
-                        IconButton(
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            color: Colors.grey,
-                            size: 20,
-                          ),
-                          onPressed: () => _deleteLicense(entry.key),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    entry.value['type'] ?? '',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    entry.value['number'] ?? '',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${entry.value['registration']} - ${entry.value['expiration']}',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.content_copy,
+                                color: Colors.grey,
+                                size: 18,
+                              ),
+                              onPressed: () {},
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 40),
+                const SizedBox(height: 40),
 
-              // Submit button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Show success message and navigate back to membership page
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Membership application submitted successfully',
+                // Next button - yellow color
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Navigate to PSME ID page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PsmeIdPage(),
                         ),
-                        backgroundColor: Colors.green,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFD600), // Yellow color
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                    );
-
-                    // Navigate back to membership page
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MembershipPage(),
+                    ),
+                    child: const Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
                       ),
-                      (route) => false,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A0F44),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text('SUBMIT'),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.grey.shade300, width: 1),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Back', style: TextStyle(color: Colors.grey)),
-              ),
-            ],
+
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
@@ -326,7 +288,7 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Container(
-        width: 400, // Match Figma width
+        width: 350,
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -338,188 +300,288 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                InkWell(
+                  onTap: () => Navigator.pop(context),
+                  child: const Icon(Icons.close, size: 20),
                 ),
               ],
             ),
             const SizedBox(height: 16),
 
             // PRC License Type
-            _buildDialogField(
-              label: 'PRC License Type',
-              controller: _licenseTypeController,
-              required: true,
-              isDropdown: true,
-              dropdownItems: const [
-                'Professional Mechanical Engineer',
-                'Registered Mechanical Engineer',
-                'Certified Plant Mechanic',
-                'ME Graduate',
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    Text(
+                      'PRC License Type',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      ' *',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButtonFormField<String>(
+                      value:
+                          _licenseTypeController.text.isNotEmpty
+                              ? _licenseTypeController.text
+                              : null,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                        border: InputBorder.none,
+                      ),
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      hint: const Text('Select license type'),
+                      isExpanded: true,
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'Professional Mechanical Engineer',
+                          child: Text('Professional Mechanical Engineer'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Registered Mechanical Engineer',
+                          child: Text('Registered Mechanical Engineer'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Certified Plant Mechanic',
+                          child: Text('Certified Plant Mechanic'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _licenseTypeController.text = value ?? '';
+                        });
+                      },
+                    ),
+                  ),
+                ),
               ],
             ),
 
             const SizedBox(height: 16),
 
             // License Number
-            _buildDialogField(
-              label: 'License Number',
-              controller: _licenseNumberController,
-              required: true,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    Text(
+                      'License Number',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      ' *',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: TextFormField(
+                    controller: _licenseNumberController,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                    style: const TextStyle(fontSize: 14),
+                    textAlignVertical: TextAlignVertical.center,
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 16),
 
             // Registration Date
-            _buildDialogField(
-              label: 'Registration Date',
-              controller: _registrationDateController,
-              required: true,
-              isDate: true,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    Text(
+                      'Registration Date',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      ' *',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: TextFormField(
+                    controller: _registrationDateController,
+                    decoration: const InputDecoration(
+                      hintText: 'MM/DD/YYYY',
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      border: InputBorder.none,
+                      suffixIcon: Icon(Icons.calendar_today, size: 18),
+                    ),
+                    style: const TextStyle(fontSize: 14),
+                    textAlignVertical: TextAlignVertical.center,
+                    readOnly: true,
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _registrationDateController.text =
+                              "${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}/${picked.year}";
+                        });
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 16),
 
             // Expiry Date
-            _buildDialogField(
-              label: 'Expiry Date',
-              controller: _expiryDateController,
-              required: true,
-              isDate: true,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    Text(
+                      'Expiry Date',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      ' *',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: TextFormField(
+                    controller: _expiryDateController,
+                    decoration: const InputDecoration(
+                      hintText: 'MM/DD/YYYY',
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      border: InputBorder.none,
+                      suffixIcon: Icon(Icons.calendar_today, size: 18),
+                    ),
+                    style: const TextStyle(fontSize: 14),
+                    textAlignVertical: TextAlignVertical.center,
+                    readOnly: true,
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _expiryDateController.text =
+                              "${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}/${picked.year}";
+                        });
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 24),
 
+            // Add/Save License button
             SizedBox(
               width: double.infinity,
+              height: 40,
               child: ElevatedButton(
                 onPressed: onSave,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A0F44),
+                  backgroundColor: const Color(0xFF1A237E),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
                 child: Text(
                   title == 'Add New License' ? 'Add License' : 'Save License',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDialogField({
-    required String label,
-    required TextEditingController controller,
-    bool required = false,
-    bool isDate = false,
-    bool isDropdown = false,
-    List<String>? dropdownItems,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-          text: TextSpan(
-            text: label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-            children:
-                required
-                    ? const [
-                      TextSpan(
-                        text: ' *',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ]
-                    : [],
-          ),
-        ),
-        const SizedBox(height: 8),
-        if (isDropdown && dropdownItems != null)
-          DropdownButtonFormField<String>(
-            value: controller.text.isNotEmpty ? controller.text : null,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-            hint: const Text('Select license type'),
-            items:
-                dropdownItems.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-            onChanged: (String? newValue) {
-              if (newValue != null) {
-                controller.text = newValue;
-              }
-            },
-          )
-        else if (isDate)
-          TextFormField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: 'MM/DD/YYYY',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              suffixIcon: const Icon(Icons.calendar_today, size: 20),
-            ),
-            readOnly: true,
-            onTap: () async {
-              final DateTime? picked = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              );
-              if (picked != null) {
-                controller.text =
-                    "${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}/${picked.year}";
-              }
-            },
-          )
-        else
-          TextFormField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: 'Enter $label',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-          ),
-      ],
     );
   }
 }

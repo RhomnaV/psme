@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'account_created_page.dart';
-
+import 'account_page/account_created_page.dart';
 
 class CreateAccountPage extends StatelessWidget {
   final String email;
@@ -31,8 +30,7 @@ class CreateAccountPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            
-           // Email Address Label
+            // Email Address Label
             const Text(
               'Email Address',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
@@ -98,7 +96,7 @@ class CreateAccountPage extends StatelessWidget {
 
             // Create Account Button
             ElevatedButton(
-                onPressed: () {
+              onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => AccountCreatedPage()),
@@ -116,7 +114,6 @@ class CreateAccountPage extends StatelessWidget {
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
-
           ],
         ),
       ),

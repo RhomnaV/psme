@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'base_page.dart';
+import '../base_page.dart';
 import 'event_details_page.dart';
 
 class EventsPage extends StatelessWidget {

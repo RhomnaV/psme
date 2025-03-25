@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import '../../services/api_service.dart';
 import 'account_created_page.dart';
-import 'create_account.dart';
+import '../create_account.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class OTPVerificationPage extends StatefulWidget {
@@ -45,9 +45,9 @@ class OTPVerificationPageState extends State<OTPVerificationPage> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -97,7 +97,9 @@ class OTPVerificationPageState extends State<OTPVerificationPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
-                    vertical: 4, horizontal: 14),
+                  vertical: 4,
+                  horizontal: 14,
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -109,8 +111,9 @@ class OTPVerificationPageState extends State<OTPVerificationPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CreateAccountPage(email: widget.email)),
-
+                      builder:
+                          (context) => CreateAccountPage(email: widget.email),
+                    ),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -147,7 +150,7 @@ class OTPVerificationPageState extends State<OTPVerificationPage> {
               },
               child: const Text(
                 'Resend OTP',
-                style: TextStyle(color:  Colors.black, fontSize: 16),
+                style: TextStyle(color: Colors.black, fontSize: 16),
               ),
             ),
             const SizedBox(height: 20),

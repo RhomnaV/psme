@@ -38,7 +38,9 @@ class AccountCreatedPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to login page
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
+                    ), // Navigate to login page
                   );
                 },
                 style: ElevatedButton.styleFrom(

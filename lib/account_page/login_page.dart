@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'home_page.dart';
+import '../home_page.dart';
 import 'forgot_password.dart';
 import 'sign_up_page.dart';
-import '../services/api_service.dart';
+import '../../services/api_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -99,7 +99,9 @@ class LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
-                    vertical: 4, horizontal: 14), // Adjust thickness here
+                  vertical: 4,
+                  horizontal: 14,
+                ), // Adjust thickness here
               ),
             ),
             const SizedBox(height: 10),
@@ -114,7 +116,9 @@ class LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
-                    vertical: 8, horizontal: 16), // Adjust thickness here
+                  vertical: 8,
+                  horizontal: 16,
+                ), // Adjust thickness here
               ),
             ),
             const SizedBox(height: 10),
@@ -129,11 +133,13 @@ class LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 TextButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ForgotPasswordPage()),
-                  ),
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ForgotPasswordPage(),
+                        ),
+                      ),
                   child: const Text(
                     'Forgot Password?',
                     style: TextStyle(color: Colors.black54),
@@ -144,8 +150,9 @@ class LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
 
             // Login Button
-           ElevatedButton(
-              onPressed: isLoading ? null : _login, // Disable button when loading
+            ElevatedButton(
+              onPressed:
+                  isLoading ? null : _login, // Disable button when loading
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF181F6C),
                 minimumSize: const Size(double.infinity, 48),
@@ -153,19 +160,20 @@ class LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              child: isLoading
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
+              child:
+                  isLoading
+                      ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      ) // Show a loading indicator
+                      : const Text(
+                        'Login',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
-                    ) // Show a loading indicator
-                  : const Text(
-                      'Login',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
             ),
             const SizedBox(height: 20),
 
@@ -226,10 +234,11 @@ class LoginPageState extends State<LoginPage> {
 
             // Create Account (Navigates to SignUpPage)
             GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SignUpPage()),
-              ),
+              onTap:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignUpPage()),
+                  ),
               child: const Text(
                 'Create Account',
                 style: TextStyle(fontSize: 16, color: Colors.black54),

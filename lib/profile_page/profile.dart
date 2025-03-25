@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'base_page.dart';
-import 'navbar.dart';
-import 'footer.dart';
+import '../base_page.dart';
+import '../navbar.dart';
+import '../footer.dart';
 import 'profile_professional.dart';
 
 class ProfilePage extends StatefulWidget {

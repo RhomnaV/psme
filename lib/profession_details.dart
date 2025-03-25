@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'navbar.dart';
-import 'prc_license.dart'; // We'll create this file next
+import 'prc_license.dart';
 
 class ProfessionDetailsPage extends StatefulWidget {
   const ProfessionDetailsPage({super.key});

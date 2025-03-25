@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'base_page.dart';
+import '../base_page.dart';
 import 'event_registration_page.dart';
 
 class EventDetailsPage extends StatefulWidget {
@@ -13,6 +13,13 @@ class EventDetailsPage extends StatefulWidget {
 class _EventDetailsPageState extends State<EventDetailsPage> {
   String? _selectedMembershipType;
   late YoutubePlayerController _youtubeController;
+
+  // Map to store membership types and their prices
+  final Map<String, Map<String, dynamic>> _membershipInfo = {
+    "regular": {"display": "Regular Member", "price": 3500.00},
+    "guest": {"display": "Guest / Non-member", "price": 4500.00},
+    "life": {"display": "Life / Associate Member", "price": 3500.00},
+  };
 
   @override
   void initState() {
@@ -359,61 +366,89 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
             const SizedBox(height: 24),
 
-            // Membership Type Dropdown
+            // Membership Type Selection
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: DropdownButtonFormField<String>(
-                  value: _selectedMembershipType,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    border: InputBorder.none,
-                  ),
-                  hint: const Text("Select an option"),
-                  items: const [
-                    DropdownMenuItem(
-                      value: "regular",
-                      child: Text("Regular Member"),
-                    ),
-                    DropdownMenuItem(
-                      value: "guest",
-                      child: Text("Guest / Non-member"),
-                    ),
-                    DropdownMenuItem(
-                      value: "life",
-                      child: Text("Life / Associate Member"),
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade200,
+                      blurRadius: 5,
+                      offset: const Offset(0, 2),
                     ),
                   ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedMembershipType = value;
-                    });
-                  },
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Please choose one",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0A0F44),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Regular Member option
+                    _buildMembershipOption(
+                      type: "regular",
+                      display: "Regular Member",
+                      price: "₱3,500.00",
+                    ),
+
+                    const Divider(),
+
+                    // Life / Associate Member option
+                    _buildMembershipOption(
+                      type: "life",
+                      display: "Life / Associate Member",
+                      price: "₱3,500.00",
+                    ),
+
+                    const Divider(),
+
+                    // Guest / Non-member option
+                    _buildMembershipOption(
+                      type: "guest",
+                      display: "Guest / Non-member",
+                      price: "₱4,500.00",
+                    ),
+                  ],
                 ),
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
             // Register button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const EventRegistrationPage(),
-                    ),
-                  );
-                },
+                onPressed:
+                    _selectedMembershipType == null
+                        ? null // Disable button if no membership type is selected
+                        : () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => EventRegistrationPage(
+                                    membershipType: _selectedMembershipType!,
+                                    membershipDisplay:
+                                        _membershipInfo[_selectedMembershipType]!["display"],
+                                    membershipPrice:
+                                        _membershipInfo[_selectedMembershipType]!["price"],
+                                  ),
+                            ),
+                          );
+                        },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
@@ -421,6 +456,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
+                  disabledBackgroundColor: Colors.red.shade200,
                 ),
                 child: const Text(
                   "Register",
@@ -433,6 +469,36 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildMembershipOption({
+    required String type,
+    required String display,
+    required String price,
+  }) {
+    return Row(
+      children: [
+        Radio<String>(
+          value: type,
+          groupValue: _selectedMembershipType,
+          onChanged: (String? value) {
+            setState(() {
+              _selectedMembershipType = value;
+            });
+          },
+        ),
+        Expanded(
+          child: Text(
+            display,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ),
+        Text(
+          price,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 

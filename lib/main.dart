@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../home_page.dart';
+import 'home_page.dart';
 import 'login_page.dart';
 import 'sign_up_page.dart';
-import '../guest.dart';
+import 'guest.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {

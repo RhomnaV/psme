@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'account_page/account_created_page.dart';
+import 'account_created_page.dart';
 
 class CreateAccountPage extends StatelessWidget {
   final String email;

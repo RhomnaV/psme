@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../services/api_service.dart';
+import '../services/api_service.dart';
 import 'account_created_page.dart';
-import '../create_account.dart';
+import 'create_account.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class OTPVerificationPage extends StatefulWidget {

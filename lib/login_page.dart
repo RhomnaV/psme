@@ -1,95 +1,75 @@
 import 'package:flutter/material.dart';
-import '../../services/api_service.dart';
-import 'otp_verification_page.dart';
-import 'login_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'home_page.dart';
+import 'forgot_password.dart';
+import 'sign_up_page.dart';
+import '../services/api_service.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  SignUpPageState createState() => SignUpPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class SignUpPageState extends State<SignUpPage> {
+class LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
 
-  Future<void> sendOTP() async {
-    if (!mounted) return;
+  void _login() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
 
-    final email = emailController.text.trim();
-    if (email.isEmpty) {
-      debugPrint("⚠️ No email entered!");
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Please enter an email.')));
+    if (email.isEmpty || password.isEmpty) {
+      _showErrorDialog("Please enter email and password.");
       return;
     }
 
-    debugPrint("📩 Sending OTP to: $email");
     setState(() => isLoading = true);
 
     try {
-      final response = await ApiService.sendOTPUser(email);
-      debugPrint("✅ OTP Response: $response");
+      final response = await ApiService.loginUser(email, password);
 
       if (!mounted) return;
 
-      if (response['resultKey'] == 1) {
-        final resultValue = response['resultValue'];
-
-        if (resultValue != null && resultValue['isexistmem'] == true) {
-          debugPrint("❌ Email already in use.");
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Email already in use.')),
-          );
-          return;
-        }
-
-        if (resultValue != null && resultValue['isMailsend'] == false) {
-          debugPrint("❌ OTP sending failed: OTP was not sent.");
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('OTP sending failed. Please try again.'),
-            ),
-          );
-          return;
-        }
-
-        debugPrint(
-          "🚀 OTP Sent Successfully! Navigating to OTP Verification Page.",
-        );
-        Navigator.push(
+      if (response['success'] == true) {
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => OTPVerificationPage(email: email),
-          ),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } else {
-        debugPrint("❌ OTP Sending Failed: ${response['message']}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['message'] ?? 'Failed to send OTP')),
-        );
+        _showErrorDialog(response['message'] ?? "Login failed. Try again.");
       }
     } catch (e) {
-      if (!mounted) return;
-
-      debugPrint("🔥 Error occurred while sending OTP: $e");
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      _showErrorDialog("Error: $e");
     } finally {
-      if (mounted) {
-        setState(() => isLoading = false);
-      }
+      setState(() => isLoading = false);
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set background color to white
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -105,7 +85,7 @@ class SignUpPageState extends State<SignUpPage> {
             ),
             const SizedBox(height: 10),
             const Text(
-              'Sign Up',
+              'Login',
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
@@ -124,22 +104,55 @@ class SignUpPageState extends State<SignUpPage> {
                 ), // Adjust thickness here
               ),
             ),
+            const SizedBox(height: 10),
+
+            // Password TextField
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
+                ), // Adjust thickness here
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Checkbox(value: false, onChanged: (value) {}),
+                    const Text('Remember Me'),
+                  ],
+                ),
+                TextButton(
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ForgotPasswordPage(),
+                        ),
+                      ),
+                  child: const Text(
+                    'Forgot Password?',
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
 
-            // Sign Up Button
+            // Login Button
             ElevatedButton(
-              onPressed: () async {
-                if (emailController.text.isNotEmpty) {
-                  await sendOTP(); // Trigger sendOTP function
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please enter an email."),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
+              onPressed:
+                  isLoading ? null : _login, // Disable button when loading
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF181F6C),
                 minimumSize: const Size(double.infinity, 48),
@@ -147,10 +160,20 @@ class SignUpPageState extends State<SignUpPage> {
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              child: const Text(
-                'Sign up with Email',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
+              child:
+                  isLoading
+                      ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      ) // Show a loading indicator
+                      : const Text(
+                        'Login',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
             ),
             const SizedBox(height: 20),
 
@@ -209,15 +232,15 @@ class SignUpPageState extends State<SignUpPage> {
             ),
             const SizedBox(height: 20),
 
-            // Already have an account? Login
+            // Create Account (Navigates to SignUpPage)
             GestureDetector(
               onTap:
                   () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    MaterialPageRoute(builder: (context) => SignUpPage()),
                   ),
               child: const Text(
-                'Login',
+                'Create Account',
                 style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
             ),

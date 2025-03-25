@@ -1,24 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'home_page.dart';
 import 'login_page.dart';
 import 'sign_up_page.dart';
-import 'guest.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Ensures async functions run before app starts
   await dotenv.load();
-  runApp(const MyApp());
+
+  bool isLoggedIn = await _checkLoginStatus();
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
+// Function to check if a user is logged in
+Future<bool> _checkLoginStatus() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('access_token'); // Retrieve token
+
+  return token != null && token.isNotEmpty;
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: IndexPage(),
+      home: isLoggedIn ? const HomePage() : const IndexPage(), // Redirect based on login status
     );
   }
 }

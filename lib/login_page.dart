@@ -17,36 +17,37 @@ class LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
 
-  void _login() async {
-    String email = emailController.text.trim();
-    String password = passwordController.text.trim();
+void _login() async {
+  String email = emailController.text.trim();
+  String password = passwordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
-      _showErrorDialog("Please enter email and password.");
-      return;
-    }
-
-    setState(() => isLoading = true);
-
-    try {
-      final response = await ApiService.loginUser(email, password);
-
-      if (!mounted) return;
-
-      if (response['success'] == true) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
-      } else {
-        _showErrorDialog(response['message'] ?? "Login failed. Try again.");
-      }
-    } catch (e) {
-      _showErrorDialog("Error: $e");
-    } finally {
-      setState(() => isLoading = false);
-    }
+  if (email.isEmpty || password.isEmpty) {
+    _showErrorDialog("Please enter email and password.");
+    return;
   }
+
+  setState(() => isLoading = true);
+
+  try {
+    final response = await ApiService.loginUser(email, password);
+
+    if (!mounted) return;
+
+    if (response['success'] == true) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } else {
+      _showErrorDialog(response['message'] ?? "Login failed. Try again.");
+    }
+  } catch (e) {
+    _showErrorDialog(e.toString().replaceFirst('Exception: ', '')); // Fix exception message
+  } finally {
+    if (mounted) setState(() => isLoading = false);
+  }
+}
+
 
   void _showErrorDialog(String message) {
     showDialog(

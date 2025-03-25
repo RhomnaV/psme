@@ -10,20 +10,7 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const HomePage(), // Start on HomePage instead of IndexPage
-    );
-  }
-}
-
-/* 
-// Original Code - Uncomment if needed
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -149,4 +136,3 @@ class IndexPage extends StatelessWidget {
     );
   }
 }
-*/

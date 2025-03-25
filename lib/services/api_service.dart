@@ -16,7 +16,8 @@ class ApiService {
   // }
 
   // POST Request
-  static Future<Map<String, dynamic>> loginUser(String email, String password) async {
+static Future<Map<String, dynamic>> loginUser(String email, String password) async {
+  try {
     final response = await http.post(
       Uri.parse(login),
       headers: {"Content-Type": "application/json"},
@@ -27,9 +28,9 @@ class ApiService {
       }),
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
+    final Map<String, dynamic> responseData = jsonDecode(response.body);
 
+    if (response.statusCode == 200) {
       if (responseData['success'] == true) {
         await _setSession(responseData);
         return responseData;
@@ -37,9 +38,12 @@ class ApiService {
         throw Exception(responseData['message'] ?? 'Login failed');
       }
     } else {
-      throw Exception('Login failed with status code: ${response.statusCode}');
+      throw Exception(responseData['message'] ?? 'Login failed with status code: ${response.statusCode}');
     }
+  } catch (e) {
+    throw Exception(e.toString());
   }
+}
 
   // Save session data in SharedPreferences
   static Future<void> _setSession(Map<String, dynamic> userData) async {

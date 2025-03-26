@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'base_page.dart';
 import 'new_membership.dart';
+import 'shared_state.dart';
+import 'active_membership_page.dart'; // Import the new page
 
 class MembershipPage extends StatefulWidget {
   const MembershipPage({super.key});
@@ -12,6 +14,21 @@ class MembershipPage extends StatefulWidget {
 class _MembershipPageState extends State<MembershipPage> {
   @override
   Widget build(BuildContext context) {
+    // If membership is confirmed, navigate to the active membership page
+    if (SharedState.isMembershipConfirmed) {
+      // Use a post-frame callback to avoid build issues
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ActiveMembershipPage()),
+        );
+      });
+
+      // Return a loading indicator while navigating
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    // Otherwise, show the default membership UI
     return BasePage(
       selectedIndex: 2, // Membership tab
       body: Container(

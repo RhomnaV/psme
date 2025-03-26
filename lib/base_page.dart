@@ -35,7 +35,9 @@ class _BasePageState extends State<BasePage> {
   }
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
+    setState(() {
+      _selectedIndex = index;
+    });
 
     if (index == 0) {
       Navigator.pushReplacement(

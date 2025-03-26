@@ -136,6 +136,8 @@ class HomePage extends StatelessWidget {
                   _buildEventCard('Newsletter 2', 'October 17-18, 2023'),
                   const SizedBox(width: 10),
                   _buildEventCard('Newsletter 3', 'October 17-18, 2023'),
+                  const SizedBox(width: 10),
+                  _buildEventCard('Newsletter 4', 'October 17-18, 2023'),
                 ],
               ),
             ),

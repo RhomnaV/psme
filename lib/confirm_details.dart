@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'base_page.dart';
 import 'membership.dart';
+import 'shared_state.dart'; // Import the shared state
 
 class ConfirmDetailsPage extends StatefulWidget {
   const ConfirmDetailsPage({super.key});
@@ -25,6 +26,69 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Blue header with PSME logo and user info
+              Container(
+                color: const Color(0xFF1A237E),
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 20,
+                ),
+                child: Row(
+                  children: [
+                    // PSME Logo
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'PSME',
+                          style: TextStyle(
+                            color: Color(0xFF1A237E),
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    // User info
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'Hi, Kevin',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Regular Member',
+                          style: TextStyle(
+                            color: Color(0xFFFFD600),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    // User avatar
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
               // Content
               Padding(
@@ -514,6 +578,9 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                             onPressed:
                                 _consentChecked
                                     ? () {
+                                      // Set the membership confirmed flag to true
+                                      SharedState.isMembershipConfirmed = true;
+
                                       // Show success message and navigate back to membership page
                                       ScaffoldMessenger.of(
                                         context,

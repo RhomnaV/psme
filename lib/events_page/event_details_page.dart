@@ -337,28 +337,39 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       color: Color(0xFF0A0F44),
                     ),
                   ),
+
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildEventCard(
-                          title: "Empowering Tourism & Mechanical",
-                          date: "May 27 - 28, 2023",
-                          location: "Costa Resort, Palawan",
-                          imageAsset: "assets/logo.png",
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildEventCard(
+                  // Added SingleChildScrollView with horizontal scrolling
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 12),
+                        _buildEventCard(
                           title: "11th PSME Luzon Regional Conference",
                           date: "May 23 - 25, 2023",
                           location:
                               "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
                           imageAsset: "assets/logo.png",
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 12),
+                        _buildEventCard(
+                          title: "11th PSME Luzon Regional Conference",
+                          date: "May 23 - 25, 2023",
+                          location:
+                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
+                          imageAsset: "assets/logo.png",
+                        ),
+                        const SizedBox(width: 12),
+                        _buildEventCard(
+                          title: "Empowering Tourism & Mechanical",
+                          date: "May 27 - 28, 2023",
+                          location:
+                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
+                          imageAsset: "assets/logo.png",
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -508,7 +519,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     required String location,
     required String imageAsset,
   }) {
+    // Changed from Expanded to Container with fixed width
     return Container(
+      width: 200, // Fixed width for each card
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(8),

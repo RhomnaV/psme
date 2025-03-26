@@ -2,8 +2,21 @@ import 'package:flutter/material.dart';
 import '../base_page.dart';
 import 'event_details_page.dart';
 
-class EventsPage extends StatelessWidget {
+class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
+
+  @override
+  State<EventsPage> createState() => _EventsPageState();
+}
+
+class _EventsPageState extends State<EventsPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +27,6 @@ class EventsPage extends StatelessWidget {
   }
 
   Widget _buildEventsContent(BuildContext context) {
-    final TextEditingController _searchController = TextEditingController();
-
     return Column(
       children: [
         // PSME Events title
@@ -50,14 +61,17 @@ class EventsPage extends StatelessWidget {
         // Event filter tabs
         Padding(
           padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              _buildFilterTab("Top Pick", true),
-              _buildFilterTab("Most Search", false),
-              _buildFilterTab("Most Attended", false),
-              _buildFilterTab("Upcoming", false),
-              _buildFilterTab("Past", false),
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildFilterTab("Top Pick", true),
+                _buildFilterTab("Most Search", false),
+                _buildFilterTab("Most Attended", false),
+                _buildFilterTab("Upcoming", false),
+                _buildFilterTab("Past", false),
+              ],
+            ),
           ),
         ),
 

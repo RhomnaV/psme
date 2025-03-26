@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'base_page.dart';
 import 'events_page/events_page.dart';
+import 'sign_up_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -77,7 +78,12 @@ class HomePage extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed:  () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignUpPage(),
+                              ),
+                            ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF0A0F44),
                             foregroundColor: Colors.white,

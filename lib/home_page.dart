@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'base_page.dart';
 import 'events_page/events_page.dart';
 import 'sign_up_page.dart';
+import '../services/api_service.dart';
+import '../models/event.dart';
+import '../events_page/event_details_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  HomePageState createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage> {
+  late Future<List<Event>> futureEvents;
+
+  @override
+  void initState() {
+    super.initState();
+    futureEvents = ApiService.fetchEvents();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,70 +55,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Join PSME Community Section
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Stack(
-                children: [
-                  // Semi-transparent image overlay
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      'assets/community_bg.jpg',
-                      width: double.infinity,
-                      height: 150,
-                      fit: BoxFit.cover,
-                      color: Colors.black.withOpacity(0.6),
-                      colorBlendMode: BlendMode.darken,
-                    ),
-                  ),
-                  // Text and button
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Join the PSME community',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'Access exclusive resources to events and contents',
-                          style: TextStyle(color: Colors.white, fontSize: 12),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed:  () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpPage(),
-                              ),
-                            ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0A0F44),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            textStyle: const TextStyle(fontSize: 12),
-                          ),
-                          child: const Text('BE A MEMBER NOW'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildCommunitySection(context),
 
             const SizedBox(height: 20),
 
@@ -132,25 +87,100 @@ class HomePage extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // Event cards
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _buildEventCard('Newsletter 1', 'October 17-18, 2023'),
-                  const SizedBox(width: 10),
-                  _buildEventCard('Newsletter 2', 'October 17-18, 2023'),
-                  const SizedBox(width: 10),
-                  _buildEventCard('Newsletter 3', 'October 17-18, 2023'),
-                  const SizedBox(width: 10),
-                  _buildEventCard('Newsletter 4', 'October 17-18, 2023'),
-                ],
-              ),
+            // Use FutureBuilder to display dynamic event cards
+            FutureBuilder<List<Event>>(
+              future: futureEvents,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Failed to load events'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No upcoming events'));
+                }
+
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: snapshot.data!.map((event) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: _buildEventCard(context, event.id, event.title, event.formattedDate, event.imageUrl),
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
             ),
 
             const SizedBox(height: 20),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCommunitySection(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset(
+              'assets/community_bg.jpg',
+              width: double.infinity,
+              height: 150,
+              fit: BoxFit.cover,
+              color: Colors.black.withOpacity(0.6),
+              colorBlendMode: BlendMode.darken,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Join the PSME community',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Access exclusive resources to events and contents',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SignUpPage(),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0A0F44),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    textStyle: const TextStyle(fontSize: 12),
+                  ),
+                  child: const Text('BE A MEMBER NOW'),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -166,8 +196,17 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildEventCard(String title, String date) {
-    return Container(
+Widget _buildEventCard(BuildContext context, int id, String title, String date, String imageUrl) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EventDetailsPage(eventId: id),
+        ),
+      );
+    },
+    child: Container(
       width: 150,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -181,12 +220,36 @@ class HomePage extends StatelessWidget {
               topLeft: Radius.circular(10),
               topRight: Radius.circular(10),
             ),
-            child: Image.asset(
-              'assets/logo.png',
-              width: 150,
-              height: 100,
-              fit: BoxFit.cover,
-            ),
+            child: imageUrl.isNotEmpty
+                ? Image.network(
+                    imageUrl,
+                    width: 150,
+                    height: 100,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return SizedBox(
+                        width: 150,
+                        height: 100,
+                        child: const Center(child: CircularProgressIndicator()),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      print("Error loading image: $error"); // Debugging
+                      return Image.asset(
+                        'assets/logo.png', // Fallback image
+                        width: 150,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  )
+                : Image.asset(
+                    'assets/logo.png', // Fallback for empty URL
+                    width: 150,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -210,6 +273,8 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

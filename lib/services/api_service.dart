@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/event.dart'; // Ensure Event model is imported
+
 
 class ApiService {
   // GET Request
@@ -14,6 +16,49 @@ class ApiService {
   //     throw Exception('Failed to load users');
   //   }
   // }
+
+static Future<List<Event>> _fetchEventsFromAPI(String url, {bool singleEvent = false}) async {
+  try {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+      if (jsonData.containsKey('resultKey') && jsonData['resultKey'] == 1) {
+        final dynamic resultValue = jsonData['resultValue'];
+
+        // Ensure resultValue is always a List
+        final List<dynamic> eventList = (resultValue is List) ? resultValue : [resultValue];
+
+        if (singleEvent && eventList.isNotEmpty) {
+          return [Event.fromJson(eventList.first)];
+        }
+
+        return eventList.map((event) => Event.fromJson(event)).toList();
+      }
+    } 
+
+    throw Exception("Failed to load events: ${response.statusCode}");
+  } catch (e) {
+    print("Error fetching events: $e");
+    return [];
+  }
+}
+
+
+
+  // ✅ Fetch all events
+  static Future<List<Event>> fetchEvents() async {
+    return await _fetchEventsFromAPI(events);
+  }
+
+  static Future<Event?> fetchEventByID(int eventID) async {
+    String url = getEventByIdUrl(eventID);
+    print("Fetching event details from URL: $url");
+
+    List<Event> events = await _fetchEventsFromAPI(url, singleEvent: true);
+    return events.isNotEmpty ? events.first : null;
+}
 
   // POST Request
 static Future<Map<String, dynamic>> loginUser(String email, String password) async {
@@ -93,9 +138,6 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
 
       // ✅ Decode JSON response
       final Map<String, dynamic> jsonData = jsonDecode(response.body);
-
-      // ✅ Debug the response
-      print("📩 API Response: $jsonData");
 
       // ✅ Check if `resultKey` exists and equals 1
       if (jsonData.containsKey('resultKey') && jsonData['resultKey'] == 1) {

@@ -2,35 +2,85 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../base_page.dart';
 import 'event_registration_page.dart';
+import '../models/event.dart';
+import '../services/api_service.dart';
+import '../utils/constants.dart';
 
 class EventDetailsPage extends StatefulWidget {
-  const EventDetailsPage({super.key});
+  final int eventId;
+  const EventDetailsPage({required this.eventId, super.key});
 
   @override
-  State<EventDetailsPage> createState() => _EventDetailsPageState();
+  State<EventDetailsPage> createState() => EventDetailsPageState();
 }
 
-class _EventDetailsPageState extends State<EventDetailsPage> {
+class EventDetailsPageState extends State<EventDetailsPage> {
   String? _selectedMembershipType;
   late YoutubePlayerController _youtubeController;
+   Map<String, dynamic> eventData = {};
 
-  // Map to store membership types and their prices
-  final Map<String, Map<String, dynamic>> _membershipInfo = {
-    "regular": {"display": "Regular Member", "price": 3500.00},
-    "guest": {"display": "Guest / Non-member", "price": 4500.00},
-    "life": {"display": "Life / Associate Member", "price": 3500.00},
+   late Future<List<Event>> futureEvents;
+
+  
+  // Membership types mapping
+  final Map<int, String> _membershipLabels = {
+    1: "Regular Member",
+    2: "Life / Associate Member",
+    3: "Guest / Non-member",
   };
+
+  Map<String, Map<String, dynamic>> _membershipInfo = {}; // Empty initially
 
   @override
   void initState() {
     super.initState();
-    // Initialize YouTube player with a sample video ID
-    // Replace this with your actual YouTube video ID
+    _fetchEventDetails();
+     futureEvents = ApiService.fetchEvents();
+
     _youtubeController = YoutubePlayerController(
-      initialVideoId: 'dQw4w9WgXcQ', // Sample video ID
+      initialVideoId: 'dQw4w9WgXcQ',
       flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
     );
   }
+
+
+Future<void> _fetchEventDetails() async {
+  try {
+    Event? event = await ApiService.fetchEventByID(widget.eventId);
+
+    if (event != null) {
+      Map<String, Map<String, dynamic>> membershipPricing = {};
+
+      if (event.eventPricing.isNotEmpty) {
+        for (var pricing in event.eventPricing) {
+          int memberTypeId = pricing.memberTypeId;
+          String? label = _membershipLabels[memberTypeId];
+
+          if (label != null) {
+            membershipPricing[label.toLowerCase()] = {
+              "display": label,
+              "price": double.tryParse(pricing.amount) ?? 0.0,
+              "early_bird_price": double.tryParse(pricing.earlyBirdAmount) ?? 0.0,
+              "pwd_senior_price": double.tryParse(pricing.pwdSeniorAmount) ?? 0.0,
+              "new_board_passer_price": double.tryParse(pricing.newBoardPasserAmt) ?? 0.0,
+            };
+          }
+        }
+      }
+
+      setState(() {
+        eventData = event.toJson(); // ✅ Now correctly storing a single event
+        _membershipInfo = membershipPricing;
+      });
+    } else {
+      print("Error: No event data found");
+    }
+  } catch (e) {
+    print("Error fetching event: $e");
+  }
+}
+
+
 
   @override
   void dispose() {
@@ -47,6 +97,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   Widget _buildEventDetailsContent(BuildContext context) {
+    if (eventData == null) {
+    return const Center(child: CircularProgressIndicator());
+    }
+
     return Container(
       color: Colors.white,
       child: SingleChildScrollView(
@@ -58,19 +112,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 horizontal: 16.0,
                 vertical: 16.0,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    "72ND PSME National Convention",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0A0F44),
-                    ),
-                    textAlign: TextAlign.center,
+              child: Text(
+                  eventData!["name"] ?? "Event Title",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0A0F44),
                   ),
-                ],
+                  textAlign: TextAlign.center,
               ),
             ),
 
@@ -102,7 +151,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                               ),
                             ),
                             Text(
-                              "Oct 17-18, 2023",
+                              eventData!["formattedDate"] ?? "TBA",
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey.shade600,
@@ -137,7 +186,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                               ),
                             ),
                             Text(
-                              "10 AM - 03 PM PM",
+                              eventData!["formattedTime"] ?? "TBA",
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey.shade600,
@@ -183,7 +232,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                 ),
                               ),
                               Text(
-                                "SMX CONVENTION CENTER MANILA, PHILIPPINES",
+                                eventData!["location"] ?? "N/A",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -218,13 +267,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                 color: Color(0xFF0A0F44),
                               ),
                             ),
-                            Text(
-                              "Face-to-Face",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade600,
-                              ),
+                        Text(
+                            eventData!["type"] == 1 ? "Face-to-Face" : "Virtual",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
                             ),
+                          ),
                           ],
                         ),
                       ],
@@ -262,8 +311,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "The 72nd National Convention of the Philippine Society of Mechanical Engineers (PSME) is a significant annual event where mechanical engineering professionals from across the Philippines gather to discuss industry trends, advancements, and best practices. The convention features a comprehensive program of technical sessions, workshops, and networking opportunities aimed at fostering professional growth, collaboration, and innovation within the field.",
-                          style: TextStyle(
+                            eventData!["shortdescription"] ?? "N/A",
+                            style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey.shade600,
                             height: 1.5,
@@ -277,17 +326,40 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             ),
 
             const SizedBox(height: 24),
-
             // Event logo/badge
             Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
-                child: Image.asset(
-                  'assets/logo.png',
-                  width: 150,
-                  height: 150,
-                  fit: BoxFit.cover,
-                ),
+                child: (eventData?.containsKey("bannerImage") == true && eventData?["bannerImage"]?.isNotEmpty == true)
+                    ? Image.network(
+                        eventData!["bannerImage"],
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return SizedBox(
+                            width: 150,
+                            height: 150,
+                            child: const Center(child: CircularProgressIndicator()),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          print("Error loading image: $error"); // Debugging
+                          return Image.asset(
+                            'assets/logo.png', // Fallback image
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
+                    : Image.asset(
+                        'assets/logo.png', // Fallback for empty or null URL
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
 
@@ -323,61 +395,58 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
             const SizedBox(height: 24),
 
-            // Other Events You May Like Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Other Events you may like",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0A0F44),
+           Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                    "Other Events You May Like",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0A0F44),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 16),
 
-                  const SizedBox(height: 16),
-                  // Added SingleChildScrollView with horizontal scrolling
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 12),
-                        _buildEventCard(
-                          title: "11th PSME Luzon Regional Conference",
-                          date: "May 23 - 25, 2023",
-                          location:
-                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
-                          imageAsset: "assets/logo.png",
-                        ),
-                        const SizedBox(width: 12),
-                        _buildEventCard(
-                          title: "11th PSME Luzon Regional Conference",
-                          date: "May 23 - 25, 2023",
-                          location:
-                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
-                          imageAsset: "assets/logo.png",
-                        ),
-                        const SizedBox(width: 12),
-                        _buildEventCard(
-                          title: "Empowering Tourism & Mechanical",
-                          date: "May 27 - 28, 2023",
-                          location:
-                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
-                          imageAsset: "assets/logo.png",
-                        ),
-                      ],
+                    FutureBuilder<List<Event>>(
+                      future: futureEvents, // Use the future initialized in initState
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Center(child: Text('No events available'));
+                        }
+
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: snapshot.data!.map((event) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: _buildEventCard(
+                                  title: event.title,
+                                  date: event.formattedDate,
+                                  location: event.location,
+                                  imageAsset: event.imageUrl,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+
 
             const SizedBox(height: 24),
 
-            // Membership Type Selection
+          // Membership Type Selection
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
@@ -408,29 +477,17 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     const SizedBox(height: 16),
 
                     // Regular Member option
-                    _buildMembershipOption(
-                      type: "regular",
-                      display: "Regular Member",
-                      price: "₱3,500.00",
-                    ),
+                    _buildMembershipOption("regular"),
 
                     const Divider(),
 
                     // Life / Associate Member option
-                    _buildMembershipOption(
-                      type: "life",
-                      display: "Life / Associate Member",
-                      price: "₱3,500.00",
-                    ),
+                    _buildMembershipOption("life"),
 
                     const Divider(),
 
                     // Guest / Non-member option
-                    _buildMembershipOption(
-                      type: "guest",
-                      display: "Guest / Non-member",
-                      price: "₱4,500.00",
-                    ),
+                    _buildMembershipOption("guest"),
                   ],
                 ),
               ),
@@ -483,33 +540,36 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     );
   }
 
-  Widget _buildMembershipOption({
-    required String type,
-    required String display,
-    required String price,
-  }) {
-    return Row(
-      children: [
-        Radio<String>(
-          value: type,
-          groupValue: _selectedMembershipType,
-          onChanged: (String? value) {
-            setState(() {
-              _selectedMembershipType = value;
-            });
-          },
+  Widget _buildMembershipOption(String type) {
+    final membership = _membershipInfo[type] ?? {
+      "display": "Unknown",
+      "price": 0.0,
+    };
+
+    return ListTile(
+      title: Text(
+        membership["display"],
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
-        Expanded(
-          child: Text(
-            display,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
+      ),
+      subtitle: Text(
+        "₱${membership["price"].toStringAsFixed(2)}", // Format as currency
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.grey,
         ),
-        Text(
-          price,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ],
+      ),
+      leading: Radio<String>(
+        value: type,
+        groupValue: _selectedMembershipType,
+        onChanged: (String? value) {
+          setState(() {
+            _selectedMembershipType = value;
+          });
+        },
+      ),
     );
   }
 

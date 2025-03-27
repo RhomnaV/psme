@@ -14,6 +14,13 @@ void main() async {
   runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
+// Function to check if a user is logged in
+Future<bool> _checkLoginStatus() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('access_token'); // Retrieve token
+
+  return token != null && token.isNotEmpty;
+}
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
@@ -125,7 +132,7 @@ class IndexPage extends StatelessWidget {
                   onPressed: () {
                    Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => GuestPage()), 
+                    MaterialPageRoute(builder: (context) => HomePage()), 
                     );
                   },
                   child: const Text(
@@ -141,4 +148,3 @@ class IndexPage extends StatelessWidget {
     );
   }
 }
-*/

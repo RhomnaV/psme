@@ -22,6 +22,7 @@ class Event {
   final String cpdPoint;
   final int type;
   final List<EventPricing> eventPricing;
+  final String eventimageurl;
 
   Event({
     required this.id,
@@ -45,6 +46,7 @@ class Event {
     required this.cpdPoint,
     required this.type,
     required this.eventPricing,
+    required this.eventimageurl,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -73,6 +75,7 @@ class Event {
               ?.map((e) => EventPricing.fromJson(e))
               .toList() ??
           [],
+      eventimageurl: json['eventimageurl'] ?? '',
     );
   }
 
@@ -99,6 +102,9 @@ class Event {
       'cpdpoint': cpdPoint,
       'type': type,
       'event_pricing': eventPricing.map((pricing) => pricing.toJson()).toList(),
+      'formattedDate': formattedDate,  // ✅ Include formattedDate
+      'formattedTime': formattedTime,  // ✅ Include formattedTime
+      'eventimageurl': eventimageurl,
     };
   }
 
@@ -127,18 +133,52 @@ class Event {
   }
 
   String get formattedTime {
-  try {
-    DateTime parsedStart = DateTime.parse(time);
-    DateTime parsedEnd = DateTime.parse(endTime);
+    try {
+      // Normalize time format by ensuring space before AM/PM
+      String normalizedStartTime = time.replaceAll(RegExp(r'(\d{2}:\d{2}:\d{2})(am|pm)', caseSensitive: false), r'\1 \2').toUpperCase();
+      String normalizedEndTime = endTime.replaceAll(RegExp(r'(\d{2}:\d{2}:\d{2})(am|pm)', caseSensitive: false), r'\1 \2').toUpperCase();
 
-    String formattedStart = DateFormat.jm().format(parsedStart); // 8:00 AM
-    String formattedEnd = DateFormat.jm().format(parsedEnd); // 5:00 PM
+      // Define potential date formats
+      List<DateFormat> formats = [
+        DateFormat("yyyy-MM-dd HH:mm:ss"),   // 24-hour format
+        DateFormat("yyyy-MM-dd hh:mm:ss a")  // 12-hour format with AM/PM
+      ];
 
-    return "$formattedStart - $formattedEnd"; // Example: 8:00 AM - 5:00 PM
-  } catch (e) {
-    return "$time - $endTime"; // Fallback to raw values if parsing fails
+      DateTime? parsedStart;
+      DateTime? parsedEnd;
+
+      // Try parsing start time
+      for (var format in formats) {
+        try {
+          parsedStart = format.parse(normalizedStartTime);
+          break;
+        } catch (e) {}
+      }
+
+      // Try parsing end time
+      for (var format in formats) {
+        try {
+          parsedEnd = format.parse(normalizedEndTime);
+          break;
+        } catch (e) {}
+      }
+
+      // Ensure both times were successfully parsed
+      if (parsedStart == null || parsedEnd == null) {
+        throw FormatException("Invalid time format");
+      }
+
+      // Convert to "hh:mm a" format (08:00 AM - 05:00 PM)
+      String formattedStart = DateFormat("hh:mm a").format(parsedStart);
+      String formattedEnd = DateFormat("hh:mm a").format(parsedEnd);
+
+      return "$formattedStart - $formattedEnd"; // Example: "08:00 AM - 05:00 PM"
+    } catch (e) {
+      print("Error formatting time: $e");
+      return "$time - $endTime"; // Fallback to raw values if parsing fails
+    }
   }
-}
+
 }
 
 class EventPricing {

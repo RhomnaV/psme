@@ -18,6 +18,7 @@ class EventDetailsPageState extends State<EventDetailsPage> {
   String? _selectedMembershipType;
   late YoutubePlayerController _youtubeController;
    Map<String, dynamic> eventData = {};
+   
 
    late Future<List<Event>> futureEvents;
 
@@ -54,9 +55,24 @@ Future<void> _fetchEventDetails() async {
       if (event.eventPricing.isNotEmpty) {
         for (var pricing in event.eventPricing) {
           int memberTypeId = pricing.memberTypeId;
-          String? label = _membershipLabels[memberTypeId];
+          String? label;
 
-          if (label != null) {
+          // Match membership type logic from Angular
+          switch (memberTypeId) {
+            case 0:
+              label = "Guest / Non-member";
+              break;
+            case 1:
+              label = "Regular Member";
+              break;
+            case 2:
+              label = "Life / Associate Member";
+              break;
+            default:
+              label = "Unknown"; // Fallback for unknown types
+          }
+
+          if (label != "Unknown") {
             membershipPricing[label.toLowerCase()] = {
               "display": label,
               "price": double.tryParse(pricing.amount) ?? 0.0,
@@ -69,9 +85,11 @@ Future<void> _fetchEventDetails() async {
       }
 
       setState(() {
-        eventData = event.toJson(); // ✅ Now correctly storing a single event
-        _membershipInfo = membershipPricing;
+        eventData = event.toJson(); // ✅ Store event data
+        _membershipInfo = membershipPricing; // ✅ Update membership info
       });
+
+      print("_membershipInfo: $_membershipInfo"); // Debugging output
     } else {
       print("Error: No event data found");
     }
@@ -79,7 +97,6 @@ Future<void> _fetchEventDetails() async {
     print("Error fetching event: $e");
   }
 }
-
 
 
   @override
@@ -330,9 +347,10 @@ Future<void> _fetchEventDetails() async {
             Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
-                child: (eventData?.containsKey("bannerImage") == true && eventData?["bannerImage"]?.isNotEmpty == true)
+                child: (eventData?.containsKey("eventimageurl") == true && eventData?["eventimageurl"]?.isNotEmpty == true)
                     ? Image.network(
-                        eventData!["bannerImage"],
+                      
+                        eventData!["eventimageurl"],
                         width: 150,
                         height: 150,
                         fit: BoxFit.cover,
@@ -395,7 +413,7 @@ Future<void> _fetchEventDetails() async {
 
             const SizedBox(height: 24),
 
-            // Other Events You May Like Section
+              // Other Events You May Like Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -409,39 +427,40 @@ Future<void> _fetchEventDetails() async {
                       color: Color(0xFF0A0F44),
                     ),
                   ),
-
                   const SizedBox(height: 16),
-                  // Added SingleChildScrollView with horizontal scrolling
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 12),
-                        _buildEventCard(
-                          title: "11th PSME Luzon Regional Conference",
-                          date: "May 23 - 25, 2023",
-                          location:
-                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
-                          imageAsset: "assets/logo.png",
+
+                  // Fetch and display events dynamically
+                  FutureBuilder<List<Event>>(
+                    future: futureEvents,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return const Center(child: Text("Failed to load events"));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text("No events available"));
+                      }
+
+                      List<Event> events = snapshot.data!;
+
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 12),
+                            ...events.map((event) => Padding(
+                                  padding: const EdgeInsets.only(right: 12),
+                                  child: _buildEventCard(
+                                    title: event.title,
+                                    date: event.formattedDate,
+                                    location: event.location,
+                                    imageAsset: event.imageUrl ?? "assets/logo.png",
+                                  ),
+                                )),
+                          ],
                         ),
-                        const SizedBox(width: 12),
-                        _buildEventCard(
-                          title: "11th PSME Luzon Regional Conference",
-                          date: "May 23 - 25, 2023",
-                          location:
-                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
-                          imageAsset: "assets/logo.png",
-                        ),
-                        const SizedBox(width: 12),
-                        _buildEventCard(
-                          title: "Empowering Tourism & Mechanical",
-                          date: "May 27 - 28, 2023",
-                          location:
-                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
-                          imageAsset: "assets/logo.png",
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -449,6 +468,7 @@ Future<void> _fetchEventDetails() async {
 
 
             const SizedBox(height: 24),
+
 
           // Membership Type Selection
             Padding(
@@ -480,18 +500,11 @@ Future<void> _fetchEventDetails() async {
                     ),
                     const SizedBox(height: 16),
 
-                    // Regular Member option
-                    _buildMembershipOption("regular"),
-
+                    _buildMembershipOption("regular member"),
                     const Divider(),
-
-                    // Life / Associate Member option
-                    _buildMembershipOption("life"),
-
+                    _buildMembershipOption("life / associate member"),
                     const Divider(),
-
-                    // Guest / Non-member option
-                    _buildMembershipOption("guest"),
+                    _buildMembershipOption("guest / non-member"),
                   ],
                 ),
               ),
@@ -578,67 +591,81 @@ Future<void> _fetchEventDetails() async {
   }
 
   Widget _buildEventCard({
-    required String title,
-    required String date,
-    required String location,
-    required String imageAsset,
-  }) {
-    // Changed from Expanded to Container with fixed width
-    return Container(
-      width: 200, // Fixed width for each card
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Event image
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-            ),
-            child: Image.asset(
-              imageAsset,
-              height: 120,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+  required String title,
+  required String date,
+  required String location,
+  required String imageAsset,
+}) {
+  return Container(
+    width: 200, // Fixed width for each card
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey.shade300),
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Event image (Supports both network & local assets)
+        ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
           ),
+          child: imageAsset.startsWith("http") // Check if it's a network image
+              ? Image.network(
+                  imageAsset,
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/logo.png", // Fallback image if network fails
+                      height: 120,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    );
+                  },
+                )
+              : Image.asset(
+                  imageAsset,
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+        ),
 
-          // Event details
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+        // Event details
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  date,
-                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  location,
-                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                date,
+                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                location,
+                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ),
+  );
   }
 }

@@ -116,7 +116,7 @@ class _MembershipPageState extends State<MembershipPage> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(
-                              0xFF1A237E,
+                              0xFF181F6C,
                             ), // Dark blue
                             foregroundColor: Colors.white,
                             elevation: 0,

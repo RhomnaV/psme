@@ -136,7 +136,7 @@ Future<void> _fetchEventDetails() async {
                         const Icon(
                           Icons.calendar_today_outlined,
                           size: 16,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         const SizedBox(width: 8),
                         Column(
@@ -147,7 +147,7 @@ Future<void> _fetchEventDetails() async {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF0A0F44),
+                                color: Color(0xFF181F6C),
                               ),
                             ),
                             Text(
@@ -171,7 +171,7 @@ Future<void> _fetchEventDetails() async {
                         const Icon(
                           Icons.access_time,
                           size: 16,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         const SizedBox(width: 8),
                         Column(
@@ -182,7 +182,7 @@ Future<void> _fetchEventDetails() async {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF0A0F44),
+                                color: Color(0xFF181F6C),
                               ),
                             ),
                             Text(
@@ -216,7 +216,7 @@ Future<void> _fetchEventDetails() async {
                         const Icon(
                           Icons.location_on_outlined,
                           size: 16,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -228,7 +228,7 @@ Future<void> _fetchEventDetails() async {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF0A0F44),
+                                  color: Color(0xFF181F6C),
                                 ),
                               ),
                               Text(
@@ -253,7 +253,7 @@ Future<void> _fetchEventDetails() async {
                         const Icon(
                           Icons.people_outline,
                           size: 16,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         const SizedBox(width: 8),
                         Column(
@@ -264,7 +264,7 @@ Future<void> _fetchEventDetails() async {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF0A0F44),
+                                color: Color(0xFF181F6C),
                               ),
                             ),
                         Text(
@@ -294,7 +294,7 @@ Future<void> _fetchEventDetails() async {
                   const Icon(
                     Icons.info_outline,
                     size: 16,
-                    color: Color(0xFF0A0F44),
+                    color: Color(0xFF181F6C),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -306,7 +306,7 @@ Future<void> _fetchEventDetails() async {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF0A0F44),
+                            color: Color(0xFF181F6C),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -395,53 +395,57 @@ Future<void> _fetchEventDetails() async {
 
             const SizedBox(height: 24),
 
-           Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                    "Other Events You May Like",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0A0F44),
-                      ),
+            // Other Events You May Like Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Other Events you may like",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0A0F44),
                     ),
-                    const SizedBox(height: 16),
+                  ),
 
-                    FutureBuilder<List<Event>>(
-                      future: futureEvents, // Use the future initialized in initState
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(child: Text('No events available'));
-                        }
-
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: snapshot.data!.map((event) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 12),
-                                child: _buildEventCard(
-                                  title: event.title,
-                                  date: event.formattedDate,
-                                  location: event.location,
-                                  imageAsset: event.imageUrl,
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        );
-                      },
+                  const SizedBox(height: 16),
+                  // Added SingleChildScrollView with horizontal scrolling
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 12),
+                        _buildEventCard(
+                          title: "11th PSME Luzon Regional Conference",
+                          date: "May 23 - 25, 2023",
+                          location:
+                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
+                          imageAsset: "assets/logo.png",
+                        ),
+                        const SizedBox(width: 12),
+                        _buildEventCard(
+                          title: "11th PSME Luzon Regional Conference",
+                          date: "May 23 - 25, 2023",
+                          location:
+                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
+                          imageAsset: "assets/logo.png",
+                        ),
+                        const SizedBox(width: 12),
+                        _buildEventCard(
+                          title: "Empowering Tourism & Mechanical",
+                          date: "May 27 - 28, 2023",
+                          location:
+                              "Costa Palawan Resort, F. Ponce De Leon RD, Brgy. San Pedro, Puerto Princesa",
+                          imageAsset: "assets/logo.png",
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
 
 
             const SizedBox(height: 24),
@@ -471,7 +475,7 @@ Future<void> _fetchEventDetails() async {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF0A0F44),
+                        color: Color(0xFF181F6C),
                       ),
                     ),
                     const SizedBox(height: 16),

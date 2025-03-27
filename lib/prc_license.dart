@@ -153,7 +153,7 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
                         width: 24,
                         height: 24,
                         decoration: const BoxDecoration(
-                          color: Color(0xFF1A237E),
+                          color: Color(0xFF181F6C),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -563,7 +563,7 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
               child: ElevatedButton(
                 onPressed: onSave,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1A237E),
+                  backgroundColor: const Color(0xFF181F6C),
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(

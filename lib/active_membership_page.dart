@@ -154,7 +154,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                           decoration: BoxDecoration(
                             color:
                                 _selectedTabIndex == 0
-                                    ? const Color(0xFF1A237E)
+                                    ? const Color(0xFF181F6C)
                                     : Colors.transparent,
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(4),
@@ -183,7 +183,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                           decoration: BoxDecoration(
                             color:
                                 _selectedTabIndex == 1
-                                    ? const Color(0xFF1A237E)
+                                    ? const Color(0xFF181F6C)
                                     : Colors.transparent,
                           ),
                           alignment: Alignment.center,
@@ -208,7 +208,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                           decoration: BoxDecoration(
                             color:
                                 _selectedTabIndex == 2
-                                    ? const Color(0xFF1A237E)
+                                    ? const Color(0xFF181F6C)
                                     : Colors.transparent,
                             borderRadius: const BorderRadius.only(
                               topRight: Radius.circular(4),
@@ -264,7 +264,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFF1A237E),
+                                      color: Color(0xFF181F6C),
                                     ),
                                   ),
                                   Text(
@@ -272,7 +272,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFF1A237E),
+                                      color: Color(0xFF181F6C),
                                     ),
                                   ),
                                 ],
@@ -307,7 +307,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                               const Icon(
                                 Icons.calendar_today,
                                 size: 18,
-                                color: Color(0xFF1A237E),
+                                color: Color(0xFF181F6C),
                               ),
                               const SizedBox(width: 12),
                               const Text(
@@ -337,7 +337,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                               const Icon(
                                 Icons.calendar_today,
                                 size: 18,
-                                color: Color(0xFF1A237E),
+                                color: Color(0xFF181F6C),
                               ),
                               const SizedBox(width: 12),
                               const Text(
@@ -367,7 +367,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                               const Icon(
                                 Icons.location_on,
                                 size: 18,
-                                color: Color(0xFF1A237E),
+                                color: Color(0xFF181F6C),
                               ),
                               const SizedBox(width: 12),
                               const Text(
@@ -399,7 +399,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A237E),
+                        color: const Color(0xFF181F6C),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       alignment: Alignment.center,

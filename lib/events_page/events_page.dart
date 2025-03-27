@@ -141,10 +141,10 @@ class _EventsPageState extends State<EventsPage> {
       margin: const EdgeInsets.only(right: 10),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isActive ? const Color(0xFF0A0F44) : Colors.transparent,
+        color: isActive ? const Color(0xFF181F6C) : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isActive ? const Color(0xFF0A0F44) : Colors.grey,
+          color: isActive ? const Color(0xFF181F6C) : Colors.grey,
           width: 1,
         ),
       ),

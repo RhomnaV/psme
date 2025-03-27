@@ -265,7 +265,7 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
                           IconButton(
                             icon: const Icon(
                               Icons.edit,
-                              color: Color(0xFF0A0F44),
+                              color: Color(0xFF181F6C),
                             ),
                             onPressed: _toggleProfessionalEditMode,
                             padding: EdgeInsets.zero,
@@ -310,7 +310,7 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
                         width: 28,
                         height: 28,
                         decoration: const BoxDecoration(
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -601,7 +601,7 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A0F44),
+                  backgroundColor: const Color(0xFF181F6C),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -749,7 +749,7 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
               child: ElevatedButton(
                 onPressed: onSave,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A0F44),
+                  backgroundColor: const Color(0xFF181F6C),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),

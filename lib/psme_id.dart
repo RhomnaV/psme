@@ -370,7 +370,7 @@ class _PsmeIdPageState extends State<PsmeIdPage> {
         height: 50,
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected ? const Color(0xFF1A237E) : Colors.grey.shade300,
+            color: isSelected ? const Color(0xFF181F6C) : Colors.grey.shade300,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(4),
@@ -393,7 +393,7 @@ class _PsmeIdPageState extends State<PsmeIdPage> {
                 padding: EdgeInsets.only(right: 16),
                 child: Icon(
                   Icons.check_circle,
-                  color: Color(0xFF1A237E),
+                  color: Color(0xFF181F6C),
                   size: 20,
                 ),
               ),

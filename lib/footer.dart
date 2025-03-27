@@ -44,14 +44,14 @@ class Footer extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isSelected ? const Color(0xFF0A0F44) : Colors.grey,
+            color: isSelected ? const Color(0xFF181F6C) : Colors.grey,
             size: 24,
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? const Color(0xFF0A0F44) : Colors.grey,
+              color: isSelected ? const Color(0xFF181F6C) : Colors.grey,
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),

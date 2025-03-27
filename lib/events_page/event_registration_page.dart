@@ -117,7 +117,7 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF0A0F44),
+                        color: Color(0xFF181F6C),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -181,7 +181,7 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF0A0F44),
+                        color: Color(0xFF181F6C),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -533,7 +533,7 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
                 child: ElevatedButton(
                   onPressed: _proceedToNextStep,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A0F44),
+                    backgroundColor: const Color(0xFF181F6C),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(

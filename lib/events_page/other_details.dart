@@ -89,7 +89,7 @@ class _OtherDetailsPageState extends State<OtherDetailsPage> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -154,7 +154,7 @@ class _OtherDetailsPageState extends State<OtherDetailsPage> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -356,7 +356,7 @@ class _OtherDetailsPageState extends State<OtherDetailsPage> {
                         child: ElevatedButton(
                           onPressed: _submitRegistration,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0A0F44),
+                            backgroundColor: const Color(0xFF181F6C),
                             foregroundColor: Colors.white,
                             minimumSize: const Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(

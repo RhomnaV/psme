@@ -15,14 +15,14 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: const Color(0xFF0A0F44), // Dark blue background
+      backgroundColor: const Color(0xFF181F6C), // Dark blue background
       automaticallyImplyLeading: false, // Remove back button
       toolbarHeight: 70, // Increase height
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // PSME Logo
-          Image.asset('assets/logo.png', height: 50, fit: BoxFit.contain),
+          Image.asset('assets/logo1.png', height: 60, fit: BoxFit.contain),
 
           // User greeting and profile picture
           Row(

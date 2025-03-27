@@ -66,7 +66,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0A0F44),
+                      color: Color(0xFF181F6C),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -87,7 +87,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         const Icon(
                           Icons.calendar_today_outlined,
                           size: 16,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         const SizedBox(width: 8),
                         Column(
@@ -98,7 +98,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF0A0F44),
+                                color: Color(0xFF181F6C),
                               ),
                             ),
                             Text(
@@ -122,7 +122,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         const Icon(
                           Icons.access_time,
                           size: 16,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         const SizedBox(width: 8),
                         Column(
@@ -133,7 +133,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF0A0F44),
+                                color: Color(0xFF181F6C),
                               ),
                             ),
                             Text(
@@ -167,7 +167,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         const Icon(
                           Icons.location_on_outlined,
                           size: 16,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -179,7 +179,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF0A0F44),
+                                  color: Color(0xFF181F6C),
                                 ),
                               ),
                               Text(
@@ -204,7 +204,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         const Icon(
                           Icons.people_outline,
                           size: 16,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         const SizedBox(width: 8),
                         Column(
@@ -215,7 +215,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF0A0F44),
+                                color: Color(0xFF181F6C),
                               ),
                             ),
                             Text(
@@ -245,7 +245,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   const Icon(
                     Icons.info_outline,
                     size: 16,
-                    color: Color(0xFF0A0F44),
+                    color: Color(0xFF181F6C),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -257,7 +257,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF0A0F44),
+                            color: Color(0xFF181F6C),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -334,7 +334,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0A0F44),
+                      color: Color(0xFF181F6C),
                     ),
                   ),
 
@@ -402,7 +402,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF0A0F44),
+                        color: Color(0xFF181F6C),
                       ),
                     ),
                     const SizedBox(height: 16),

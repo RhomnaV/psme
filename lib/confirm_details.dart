@@ -27,7 +27,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
             children: [
               // Blue header with PSME logo and user info
               Container(
-                color: const Color(0xFF1A237E),
+                color: const Color(0xFF181F6C),
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                   vertical: 16,
@@ -47,7 +47,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                         child: Text(
                           'PSME',
                           style: TextStyle(
-                            color: Color(0xFF1A237E),
+                            color: Color(0xFF181F6C),
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -519,7 +519,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                           height: 24,
                           child: Checkbox(
                             value: _consentChecked,
-                            activeColor: const Color(0xFF1A237E),
+                            activeColor: const Color(0xFF181F6C),
                             onChanged: (value) {
                               setState(() {
                                 _consentChecked = value ?? false;
@@ -645,7 +645,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
       style: const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF1A237E),
+        color: Color(0xFF181F6C),
       ),
     );
   }

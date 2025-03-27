@@ -155,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
             border: Border(
               bottom: BorderSide(
                 color:
-                    isSelected ? const Color(0xFF0A0F44) : Colors.transparent,
+                    isSelected ? const Color(0xFF181F6C) : Colors.transparent,
                 width: 3,
               ),
             ),
@@ -164,7 +164,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Text(
               tabName,
               style: TextStyle(
-                color: isSelected ? const Color(0xFF0A0F44) : Colors.grey,
+                color: isSelected ? const Color(0xFF181F6C) : Colors.grey,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontSize: 16,
               ),
@@ -235,7 +235,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           IconButton(
                             icon: const Icon(
                               Icons.edit,
-                              color: Color(0xFF0A0F44),
+                              color: Color(0xFF181F6C),
                             ),
                             onPressed: _togglePersonalEditMode,
                             padding: EdgeInsets.zero,
@@ -567,7 +567,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A0F44),
+                  backgroundColor: const Color(0xFF181F6C),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),

@@ -70,7 +70,7 @@ class _EventRegistrationProfessionalPageState
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -134,7 +134,7 @@ class _EventRegistrationProfessionalPageState
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0A0F44),
+                          color: Color(0xFF181F6C),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -423,7 +423,7 @@ class _EventRegistrationProfessionalPageState
                                   icon: const Icon(Icons.add),
                                   label: const Text("Choose"),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF0A0F44),
+                                    backgroundColor: const Color(0xFF181F6C),
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -801,7 +801,7 @@ class _EventRegistrationProfessionalPageState
                   child: ElevatedButton(
                     onPressed: _navigateToNextPage,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0A0F44),
+                      backgroundColor: const Color(0xFF181F6C),
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(

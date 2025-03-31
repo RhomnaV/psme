@@ -114,7 +114,7 @@ Future<void> _fetchEventDetails() async {
   }
 
   Widget _buildEventDetailsContent(BuildContext context) {
-    if (eventData == null) {
+    if (eventData == null) { 
     return const Center(child: CircularProgressIndicator());
     }
 
@@ -455,6 +455,14 @@ Future<void> _fetchEventDetails() async {
                                     date: event.formattedDate,
                                     location: event.location,
                                     imageAsset: event.imageUrl ?? "assets/logo.png",
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => EventDetailsPage(eventId: event.id), // Pass the event ID
+                                        ),
+                                      );
+                                    },
                                   ),
                                 )),
                           ],
@@ -530,6 +538,7 @@ Future<void> _fetchEventDetails() async {
                                         _membershipInfo[_selectedMembershipType]!["display"],
                                     membershipPrice:
                                         _membershipInfo[_selectedMembershipType]!["price"],
+                                    eventData: eventData,
                                   ),
                             ),
                           );
@@ -590,82 +599,87 @@ Future<void> _fetchEventDetails() async {
     );
   }
 
-  Widget _buildEventCard({
+ Widget _buildEventCard({
   required String title,
   required String date,
   required String location,
   required String imageAsset,
+  required VoidCallback onTap, // Added onTap function
 }) {
-  return Container(
-    width: 200, // Fixed width for each card
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey.shade300),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Event image (Supports both network & local assets)
-        ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
+  return GestureDetector(
+    onTap: onTap, // Handles tap event
+    child: Container(
+      width: 200, // Fixed width for each card
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Event image (Supports both network & local assets)
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            ),
+            child: imageAsset.startsWith("http") // Check if it's a network image
+                ? Image.network(
+                    imageAsset,
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        "assets/logo.png", // Fallback image if network fails
+                        height: 120,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  )
+                : Image.asset(
+                    imageAsset,
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
           ),
-          child: imageAsset.startsWith("http") // Check if it's a network image
-              ? Image.network(
-                  imageAsset,
-                  height: 120,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      "assets/logo.png", // Fallback image if network fails
-                      height: 120,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    );
-                  },
-                )
-              : Image.asset(
-                  imageAsset,
-                  height: 120,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-        ),
 
-        // Event details
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+          // Event details
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                date,
-                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                location,
-                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                const SizedBox(height: 4),
+                Text(
+                  date,
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  location,
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
-  }
+}
+
 }

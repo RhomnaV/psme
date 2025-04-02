@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import '../base_page.dart';
 import 'event_registration_professional_page.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart'; 
+import '../services/api_service.dart';
+import '../models/country.dart';
 
 class EventRegistrationPage extends StatefulWidget {
   final String membershipType;
   final String membershipDisplay;
   final double membershipPrice;
+  final Map<String, dynamic> eventData; 
+  
 
   const EventRegistrationPage({
     super.key,
     required this.membershipType,
     required this.membershipDisplay,
     required this.membershipPrice,
+    required this.eventData, 
   });
+
 
   @override
   State<EventRegistrationPage> createState() => _EventRegistrationPageState();
@@ -31,25 +40,87 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
   final _birthDateController = TextEditingController();
 
   String? _selectedSuffix;
-  String _selectedCountryCode = "+63"; // Default to Philippines
+  String? _selectedCountryCode;
+  List<Country> _countries = [];
+  bool _isLoading = true;
   bool _isPWD = false;
   DateTime? _selectedBirthDate;
 
-  void _proceedToNextStep() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => EventRegistrationProfessionalPage(
-                membershipType: widget.membershipType,
-                membershipDisplay: widget.membershipDisplay,
-                membershipPrice: widget.membershipPrice,
-              ),
-        ),
-      );
+  late Future<List<Country>> futureCountry;
+  @override
+  void initState() {
+    super.initState();
+    _loadCountries();
+  }
+
+Future<void> _loadCountries() async {
+  List<Country> fetchedCountries = await ApiService.fetchCountry();
+  setState(() {
+    _countries = fetchedCountries;
+    _isLoading = false;
+
+    // Ensure the default country code is in the list
+    Country? defaultCountry = _countries.firstWhere(
+      (country) => country.mobileCode == "63",
+      orElse: () => _countries.isNotEmpty ? _countries.first : Country(id: 174, name: "Philippines", mobileCode: "63", code: "PH"),
+    );
+
+    _selectedCountryCode = defaultCountry.code;
+  });
+}
+
+
+String countryCodeToEmoji(String countryCode) {
+  return countryCode.toUpperCase().split('').map((char) {
+    return String.fromCharCode(0x1F1E6 + char.codeUnitAt(0) - 'A'.codeUnitAt(0));
+  }).join();
+}
+
+  Uint8List? _pwdImageBytes;
+  File? _pwdImageFile; // For Mobile/Desktop
+
+  Future<void> _uploadImage() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+  if (image != null) {
+    if (kIsWeb) {
+      // Read image as bytes for Web
+      Uint8List bytes = await image.readAsBytes();
+      setState(() {
+        _pwdImageBytes = bytes;
+      });
+    } else {
+      // Use File for Mobile/Desktop
+      setState(() {
+        _pwdImageFile = File(image.path);
+      });
     }
   }
+}
+
+void _proceedToNextStep() {
+  if (_formKey.currentState!.validate()) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EventRegistrationProfessionalPage(
+          membershipType: widget.membershipType,
+          membershipDisplay: widget.membershipDisplay,
+          membershipPrice: widget.membershipPrice,
+          firstName: _firstNameController.text,
+          middleName: _middleNameController.text,
+          lastName: _lastNameController.text,
+          suffix: _suffixController.text,
+          email: _emailController.text,
+          mobileNumber: "${_selectedCountryCode ?? ''}${_mobileNumberController.text}",
+          birthDate: _birthDateController.text,
+          eventData: widget.eventData
+        ),
+      ),
+    );
+  }
+}
 
   // Format date as MM/DD/YYYY without using intl package
   String _formatDate(DateTime date) {
@@ -95,11 +166,14 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
   Widget build(BuildContext context) {
     return BasePage(
       selectedIndex: 0, // Home tab
-      body: _buildRegistrationContent(),
+      body: _buildRegistrationContent(context),
     );
   }
 
-  Widget _buildRegistrationContent() {
+  Widget _buildRegistrationContent(BuildContext context) {
+    if (widget.eventData == null) { 
+    return const Center(child: CircularProgressIndicator());
+    }
     return Container(
       color: Colors.white,
       child: SingleChildScrollView(
@@ -112,8 +186,8 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    const Text(
-                      "72ND PSME National Convention",
+                    Text(
+                      widget.eventData!["name"] ?? "Event Title",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -126,7 +200,7 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "OCT 17-18, 2023",
+                          widget.eventData!["formattedDate"] ?? "TBA",
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -143,7 +217,7 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          "SMX CONVENTION CENTER MANILA, PHILIPPINES",
+                          widget.eventData!["location"] ?? "N/A",
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -290,7 +364,7 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
 
                     const SizedBox(height: 16),
 
-                    // Mobile Number field with country code - FIXED OVERFLOW
+                   // Mobile Number field with country code - DYNAMIC
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -318,75 +392,38 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Country code dropdown - FIXED WIDTH
+                              // Country code dropdown - DYNAMIC
                               Container(
-                                width: 90, // Reduced from 100 to fix overflow
+                                width: 110,
                                 decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                  ),
+                                  border: Border.all(color: Colors.grey.shade300),
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(8),
                                     bottomLeft: Radius.circular(8),
                                   ),
                                 ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    value: _selectedCountryCode,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                    ), // Reduced padding
-                                    icon: const Icon(
-                                      Icons.keyboard_arrow_down,
-                                      size: 16,
-                                    ), // Smaller icon
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: "+63",
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "🇵🇭",
-                                              style: TextStyle(fontSize: 12),
-                                            ), // Smaller flag
-                                            SizedBox(
-                                              width: 2,
-                                            ), // Reduced spacing
-                                            Text(
-                                              "+63",
-                                              style: TextStyle(fontSize: 12),
-                                            ), // Smaller text
-                                          ],
-                                        ),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: _isLoading
+                                    ? Center(child: CircularProgressIndicator()) // Show loading
+                                    : DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        isExpanded: true,
+                                        value: _selectedCountryCode, // Ensure this exists in the list
+                                        items: _countries
+                                            .map((country) => DropdownMenuItem<String>(
+                                                  value: country.code, 
+                                                  child: Text("${countryCodeToEmoji(country.code)} ${country.mobileCode}"),
+                                                ))
+                                            .toList(),
+                                        onChanged: (String? value) {
+                                          if (value != null && value != _selectedCountryCode) {
+                                            setState(() {
+                                              _selectedCountryCode = value;
+                                            });
+                                          }
+                                        },
                                       ),
-                                      DropdownMenuItem(
-                                        value: "+1",
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "🇺🇸",
-                                              style: TextStyle(fontSize: 12),
-                                            ), // Smaller flag
-                                            SizedBox(
-                                              width: 2,
-                                            ), // Reduced spacing
-                                            Text(
-                                              "+1",
-                                              style: TextStyle(fontSize: 12),
-                                            ), // Smaller text
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                    onChanged: (String? value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          _selectedCountryCode = value;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
+                                    ),
                               ),
                               // Phone number input
                               Expanded(
@@ -400,9 +437,7 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
                                         topRight: Radius.circular(8),
                                         bottomRight: Radius.circular(8),
                                       ),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey.shade300,
-                                      ),
+                                      borderSide: BorderSide(color: Colors.grey.shade300),
                                     ),
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16,
@@ -489,34 +524,75 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
 
                     // PWD checkbox
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Are you a Person with Disability? (PWD)",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: _isPWD,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _isPWD = value ?? false;
-                                });
-                              },
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Are you a Person with Disability? (PWD)",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
-                            const Text("Yes"),
-                          ],
-                        ),
-                      ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: _isPWD,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _isPWD = value ?? false;
+                                  });
+                                },
+                              ),
+                              const Text("Yes"),
+                            ],
+                          ),
+
+                         if (_isPWD)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              const Text(
+                                "Please provide a proof of PWD by uploading an image file "
+                                "(recommended file size: 3MB)",
+                                style: TextStyle(fontSize: 12, color: Colors.black),
+                              ),
+                              const SizedBox(height: 8),
+                              ElevatedButton.icon(
+                                onPressed: _uploadImage,
+                                icon: const Icon(Icons.upload_file),
+                                label: const Text("Upload Image"),
+                              ),
+
+                              // Display the uploaded image based on platform
+                              if (_pwdImageBytes != null && kIsWeb)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Image.memory(
+                                    _pwdImageBytes!,
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              else if (_pwdImageFile != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Image.file(
+                                    _pwdImageFile!,
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
                     ),
                   ],
                 ),

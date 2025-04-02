@@ -6,12 +6,28 @@ class EventRegistrationProfessionalPage extends StatefulWidget {
   final String membershipType;
   final String membershipDisplay;
   final double membershipPrice;
-
+  final String firstName;
+  final String middleName;
+  final String lastName;
+  final String suffix;
+  final String email;
+  final String mobileNumber;
+  final String birthDate;
+  final Map<String, dynamic> eventData; 
+  
   const EventRegistrationProfessionalPage({
-    super.key,
+   super.key,
     required this.membershipType,
     required this.membershipDisplay,
     required this.membershipPrice,
+    required this.firstName,
+    required this.middleName,
+    required this.lastName,
+    required this.suffix,
+    required this.email,
+    required this.mobileNumber,
+    required this.birthDate,
+    required this.eventData, 
   });
 
   @override
@@ -65,8 +81,8 @@ class _EventRegistrationProfessionalPageState
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      const Text(
-                        "72ND PSME National Convention",
+                      Text(
+                        widget.eventData!["name"] ?? "Event Title",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -79,7 +95,7 @@ class _EventRegistrationProfessionalPageState
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "OCT 17-18, 2023",
+                            widget.eventData!["formattedDate"] ?? "TBA",
                             style: TextStyle(
                               color: Colors.grey.shade600,
                               fontSize: 12,
@@ -96,7 +112,7 @@ class _EventRegistrationProfessionalPageState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "SMX CONVENTION CENTER MANILA, PHILIPPINES",
+                            widget.eventData!["location"] ?? "N/A",
                             style: TextStyle(
                               color: Colors.grey.shade600,
                               fontSize: 12,

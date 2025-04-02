@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/event.dart'; // Ensure Event model is imported
-
+import '../models/country.dart';
 
 class ApiService {
   // GET Request
@@ -17,6 +17,44 @@ class ApiService {
   //   }
   // }
 
+static Future<List<dynamic>> fetchPRCLicense() async {
+  try {
+    final response = await http.get(Uri.parse(activePrcLicenceType));
+    final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      if (jsonData.containsKey('resultKey') && jsonData['resultKey'] == 1) {
+        final dynamic resultValue = jsonData['resultValue'];
+        return resultValue is List ? resultValue : [];
+      }
+    }
+    throw Exception('Failed to License Type');
+  } catch (e) {
+    print("Error fetching License Type: $e"); 
+    return [];
+  }
+}
+
+static Future<List<Country>> fetchCountry() async {
+    try {
+      final response = await http.get(Uri.parse(country));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+        if (jsonData.containsKey('resultKey') && jsonData['resultKey'] == 1) {
+          return (jsonData['resultValue'] as List)
+              .map((json) => Country.fromJson(json as Map<String, dynamic>))
+              .toList();
+        }
+      }
+      throw Exception('Failed to fetch Country data');
+    } catch (e) {
+      print("Error fetching Country: $e");
+      return [];
+    }
+  }
+ 
 static Future<List<Event>> _fetchEventsFromAPI(String url, {bool singleEvent = false}) async {
   try {
     final response = await http.get(Uri.parse(url));
@@ -44,8 +82,6 @@ static Future<List<Event>> _fetchEventsFromAPI(String url, {bool singleEvent = f
     return [];
   }
 }
-
-
 
   // ✅ Fetch all events
   static Future<List<Event>> fetchEvents() async {

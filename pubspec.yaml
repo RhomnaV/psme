@@ -65,6 +65,14 @@ flutter:
     - assets/psme-overview2.png
     - assets/psme-id.png
     - assets/logo1.png
+    - assets/ribbon-cutting.jpg
+    - assets/profile.jpg
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700  
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

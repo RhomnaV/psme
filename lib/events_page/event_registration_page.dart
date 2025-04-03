@@ -44,6 +44,7 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
   List<Country> _countries = [];
   bool _isLoading = true;
   bool _isPWD = false;
+  bool _isSenior = false;
   DateTime? _selectedBirthDate;
 
   late Future<List<Country>> futureCountry;
@@ -79,25 +80,27 @@ String countryCodeToEmoji(String countryCode) {
   Uint8List? _pwdImageBytes;
   File? _pwdImageFile; // For Mobile/Desktop
 
-  Future<void> _uploadImage() async {
+ Future<void> _uploadImage() async {
   final ImagePicker picker = ImagePicker();
   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
   if (image != null) {
-    if (kIsWeb) {
-      // Read image as bytes for Web
-      Uint8List bytes = await image.readAsBytes();
-      setState(() {
-        _pwdImageBytes = bytes;
-      });
-    } else {
-      // Use File for Mobile/Desktop
-      setState(() {
+    setState(() {
+      _isPWD = true;
+
+      if (kIsWeb) {
+        // Read image as bytes for Web
+        image.readAsBytes().then((bytes) {
+          _pwdImageBytes = bytes;
+        });
+      } else {
+        // Use File for Mobile/Desktop
         _pwdImageFile = File(image.path);
-      });
-    }
+      }
+    });
   }
 }
+
 
 void _proceedToNextStep() {
   if (_formKey.currentState!.validate()) {
@@ -115,7 +118,11 @@ void _proceedToNextStep() {
           email: _emailController.text,
           mobileNumber: "${_selectedCountryCode ?? ''}${_mobileNumberController.text}",
           birthDate: _birthDateController.text,
-          eventData: widget.eventData
+          eventData: widget.eventData,
+          isPWD: _isPWD, 
+          isSenior: _isSenior,
+          pwdImageFile: _pwdImageFile, // Pass file for mobile/desktop
+          pwdImageBytes: _pwdImageBytes, // Pass image bytes for web
         ),
       ),
     );
@@ -130,25 +137,28 @@ void _proceedToNextStep() {
     return '$month/$day/$year';
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate:
-          _selectedBirthDate ??
-          DateTime.now().subtract(
-            const Duration(days: 365 * 18),
-          ), // Default to 18 years ago
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
+Future<void> _selectDate(BuildContext context) async {
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: _selectedBirthDate ??
+        DateTime.now().subtract(
+          const Duration(days: 365 * 18),
+        ), // Default to 18 years ago
+    firstDate: DateTime(1900),
+    lastDate: DateTime.now(),
+  );
 
-    if (picked != null && picked != _selectedBirthDate) {
-      setState(() {
-        _selectedBirthDate = picked;
-        _birthDateController.text = _formatDate(picked);
-      });
-    }
+  if (picked != null && picked != _selectedBirthDate) {
+    setState(() {
+      _selectedBirthDate = picked;
+      _birthDateController.text = _formatDate(picked);
+
+      // Check if user is a senior (60 years old or more)
+      final int age = DateTime.now().year - picked.year;
+      _isSenior = age >= 60;
+    });
   }
+}
 
   @override
   void dispose() {

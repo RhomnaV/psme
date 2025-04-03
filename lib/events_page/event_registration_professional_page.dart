@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../base_page.dart';
 import 'other_details.dart';
+import 'dart:typed_data';
+import 'dart:io';
 
 class EventRegistrationProfessionalPage extends StatefulWidget {
   final String membershipType;
@@ -14,6 +16,10 @@ class EventRegistrationProfessionalPage extends StatefulWidget {
   final String mobileNumber;
   final String birthDate;
   final Map<String, dynamic> eventData; 
+  final bool isPWD;
+  final bool isSenior;
+  final File? pwdImageFile; // For Mobile/Desktop
+  final Uint8List? pwdImageBytes;
   
   const EventRegistrationProfessionalPage({
    super.key,
@@ -28,6 +34,10 @@ class EventRegistrationProfessionalPage extends StatefulWidget {
     required this.mobileNumber,
     required this.birthDate,
     required this.eventData, 
+    required this.isPWD,
+    required this.isSenior,
+    this.pwdImageFile,
+    this.pwdImageBytes,
   });
 
   @override

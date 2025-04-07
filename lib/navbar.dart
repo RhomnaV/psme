@@ -6,28 +6,24 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
 
   const Navbar({
     super.key,
-    this.userName =
-        "Kevin", // Default value, should be replaced with actual user name
-    this.membershipType =
-        "Regular Member", // Default value, should be replaced with actual membership
+    this.userName = "Kevin",
+    this.membershipType = "Regular Member",
   });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: const Color(0xFF181F6C), // Dark blue background
-      automaticallyImplyLeading: false, // Remove back button
-      toolbarHeight: 70, // Increase height
+      backgroundColor: const Color(0xFF181F6C),
+      automaticallyImplyLeading: false,
+      toolbarHeight: 90, // Increase height
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // PSME Logo
           Image.asset('assets/logo1.png', height: 60, fit: BoxFit.contain),
 
-          // User greeting and profile picture
           Row(
             children: [
-              // User greeting and membership type
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
@@ -43,9 +39,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
                   Text(
                     membershipType,
                     style: const TextStyle(
-                      color: Color(
-                        0xFFFFD700,
-                      ), // Gold color for membership text
+                      color: Color(0xFFFFD700),
                       fontSize: 12,
                     ),
                   ),

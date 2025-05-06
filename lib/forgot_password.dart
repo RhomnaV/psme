@@ -30,9 +30,7 @@ class ForgotPasswordPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Add logic for password reset
-              },
+              onPressed: () {},
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50),
               ),

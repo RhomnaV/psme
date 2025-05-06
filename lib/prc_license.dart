@@ -32,7 +32,6 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
     },
   ];
 
-  // Form controllers for adding/editing licenses
   final _licenseTypeController = TextEditingController();
   final _licenseNumberController = TextEditingController();
   final _registrationDateController = TextEditingController();
@@ -48,7 +47,6 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
   }
 
   void _showAddLicenseDialog() {
-    // Clear form fields
     _licenseTypeController.clear();
     _licenseNumberController.clear();
     _registrationDateController.clear();
@@ -61,7 +59,6 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
           (context) => _buildLicenseDialog(
             title: 'Add New License',
             onSave: () {
-              // Add new license
               setState(() {
                 _licenses.add({
                   'type': _licenseTypeController.text,
@@ -77,7 +74,6 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
   }
 
   void _showEditLicenseDialog(int index) {
-    // Pre-fill form fields with existing license data
     final license = _licenses[index];
     _licenseTypeController.text = license['type'] ?? '';
     _licenseNumberController.text = license['number'] ?? '';
@@ -91,7 +87,6 @@ class _PRCLicensePageState extends State<PRCLicensePage> {
           (context) => _buildLicenseDialog(
             title: 'Edit License',
             onSave: () {
-              // Update existing license
               setState(() {
                 _licenses[index] = {
                   'type': _licenseTypeController.text,

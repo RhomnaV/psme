@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import the login page
+import 'login_page.dart';
 
 class AccountCreatedPage extends StatelessWidget {
   const AccountCreatedPage({super.key});
@@ -16,7 +16,7 @@ class AccountCreatedPage extends StatelessWidget {
             children: [
               const Icon(
                 Icons.check_circle,
-                color: Color(0xFF0A0F44), // Blue checkmark
+                color: Color(0xFF0A0F44),
                 size: 80,
               ),
               const SizedBox(height: 20),
@@ -38,13 +38,11 @@ class AccountCreatedPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                    ), // Navigate to login page
+                    MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A0F44), // Dark blue button
+                  backgroundColor: const Color(0xFF0A0F44),
                   minimumSize: const Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(3),

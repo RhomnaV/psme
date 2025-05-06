@@ -45,6 +45,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
               const SizedBox(width: 8),
+
               const CircleAvatar(
                 radius: 20,
                 backgroundImage: AssetImage('assets/profile.jpg'),

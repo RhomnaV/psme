@@ -121,16 +121,15 @@ class SignUpPageState extends State<SignUpPage> {
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 4,
                   horizontal: 14,
-                ), // Adjust thickness here
+                ),
               ),
             ),
             const SizedBox(height: 20),
 
-            // Sign Up Button
             ElevatedButton(
               onPressed: () async {
                 if (emailController.text.isNotEmpty) {
-                  await sendOTP(); // Trigger sendOTP function
+                  await sendOTP();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -154,7 +153,6 @@ class SignUpPageState extends State<SignUpPage> {
             ),
             const SizedBox(height: 20),
 
-            // Already have an account? Login
             GestureDetector(
               onTap:
                   () => Navigator.push(

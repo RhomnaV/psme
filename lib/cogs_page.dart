@@ -11,7 +11,7 @@ class CogsPage extends StatefulWidget {
 }
 
 class _CogsPageState extends State<CogsPage> {
-  int _selectedTabIndex = 2; // COGS tab is selected
+  int _selectedTabIndex = 2;
   bool _applicationSubmitted = false;
   bool _membershipValidationSuccess = false;
   bool _chapterValidationSuccess = false;
@@ -69,7 +69,6 @@ class _CogsPageState extends State<CogsPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // PRC License Type
                 Row(
                   children: const [
                     Text(
@@ -123,7 +122,6 @@ class _CogsPageState extends State<CogsPage> {
 
                 const SizedBox(height: 16),
 
-                // License Number
                 Row(
                   children: const [
                     Text(
@@ -161,8 +159,6 @@ class _CogsPageState extends State<CogsPage> {
                 ),
 
                 const SizedBox(height: 16),
-
-                // Registration Date
                 Row(
                   children: const [
                     Text(
@@ -204,8 +200,6 @@ class _CogsPageState extends State<CogsPage> {
                 ),
 
                 const SizedBox(height: 16),
-
-                // Expiry Date
                 Row(
                   children: const [
                     Text(
@@ -247,8 +241,6 @@ class _CogsPageState extends State<CogsPage> {
                 ),
 
                 const SizedBox(height: 16),
-
-                // Add License Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -282,7 +274,7 @@ class _CogsPageState extends State<CogsPage> {
 
   void _navigateToPaymentPage() {
     setState(() {
-      _currentStep = 2; // Move to Payment step
+      _currentStep = 2;
       _membershipValidationSuccess = true;
       _chapterValidationSuccess = true;
       _showPaymentScreen = true;
@@ -291,7 +283,7 @@ class _CogsPageState extends State<CogsPage> {
 
   void _completePayment() {
     setState(() {
-      _currentStep = 3; // Move to Download step
+      _currentStep = 3;
       _paymentSuccess = true;
       _showPaymentScreen = false;
       _showDownloadScreen = true;
@@ -301,7 +293,7 @@ class _CogsPageState extends State<CogsPage> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      selectedIndex: 2, // Membership tab in bottom nav
+      selectedIndex: 2,
       body: Container(
         color: Colors.white,
         width: double.infinity,
@@ -309,7 +301,6 @@ class _CogsPageState extends State<CogsPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Profile section
               const SizedBox(height: 24),
               const CircleAvatar(
                 radius: 40,
@@ -325,11 +316,8 @@ class _CogsPageState extends State<CogsPage> {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
 
-              // Membership tabs
               const SizedBox(height: 24),
               _buildMembershipTabs(),
-
-              // COGS Content
               _buildCogsContent(),
             ],
           ),
@@ -409,7 +397,6 @@ class _CogsPageState extends State<CogsPage> {
           _buildApplicationSteps(),
           const SizedBox(height: 24),
 
-          // Show either the form, success message, payment screen, or download screen
           if (_showDownloadScreen) ...[
             _buildDownloadScreen(),
           ] else if (_showPaymentScreen) ...[
@@ -644,7 +631,7 @@ class _CogsPageState extends State<CogsPage> {
       child: ElevatedButton(
         onPressed: _submitApplication,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFFD600), // Yellow color
+          backgroundColor: const Color(0xFFFFD600),
           foregroundColor: Colors.black,
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -882,9 +869,7 @@ class _CogsPageState extends State<CogsPage> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () {
-                // Handle download
-              },
+              onPressed: () {},
               icon: const Icon(Icons.download),
               label: const Text(
                 'Download Certificate',

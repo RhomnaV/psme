@@ -25,10 +25,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BasePage(
-      selectedIndex: 0, // Home tab
-      body: _buildHomeContent(context),
-    );
+    return BasePage(selectedIndex: 0, body: _buildHomeContent(context));
   }
 
   Widget _buildHomeContent(BuildContext context) {
@@ -38,7 +35,6 @@ class HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Grid of images
             GridView.count(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
@@ -207,7 +203,10 @@ class HomePageState extends State<HomePage> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: Image.asset(imagePath, fit: BoxFit.cover),
+        child: Container(
+          color: Colors.white,
+          child: Image.asset(imagePath, fit: BoxFit.cover),
+        ),
       ),
     );
   }

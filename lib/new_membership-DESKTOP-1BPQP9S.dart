@@ -33,7 +33,6 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
-
                 const Text(
                   'New Membership',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -176,6 +175,7 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                 ),
 
                 const SizedBox(height: 24),
+
                 const Align(
                   alignment: Alignment.center,
                   child: Text(

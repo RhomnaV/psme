@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'base_page.dart';
 import 'membership.dart';
-import 'shared_state.dart'; // Import the shared state
+import 'shared_state.dart';
 
 class ConfirmDetailsPage extends StatefulWidget {
   const ConfirmDetailsPage({super.key});
@@ -16,7 +16,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      selectedIndex: 2, // Membership tab
+      selectedIndex: 2,
       body: Container(
         color: Colors.white,
         width: double.infinity,
@@ -25,7 +25,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Blue header with PSME logo and user info
               Container(
                 color: const Color(0xFF181F6C),
                 width: double.infinity,
@@ -35,7 +34,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                 ),
                 child: Row(
                   children: [
-                    // PSME Logo
                     Container(
                       width: 40,
                       height: 40,
@@ -55,7 +53,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    // User info
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
@@ -77,7 +74,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                       ],
                     ),
                     const Spacer(),
-                    // User avatar
                     Container(
                       width: 40,
                       height: 40,
@@ -90,13 +86,11 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                 ),
               ),
 
-              // Content
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Confirm Details title
                     const Center(
                       child: Text(
                         'Confirm Details',
@@ -108,8 +102,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                     ),
 
                     const SizedBox(height: 24),
-
-                    // Membership Information section
                     _buildSectionHeader('Membership Information'),
                     const SizedBox(height: 16),
 
@@ -158,8 +150,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                     ),
 
                     const Divider(height: 32),
-
-                    // Personal Information section
                     _buildSectionHeader('Personal Information'),
                     const SizedBox(height: 16),
 
@@ -248,8 +238,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                     ),
 
                     const Divider(height: 32),
-
-                    // Professional Information section
                     _buildSectionHeader('Professional Information'),
                     const SizedBox(height: 16),
 
@@ -272,8 +260,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                     ),
 
                     const Divider(height: 32),
-
-                    // PSME Member ID section
                     _buildSectionHeader('PSME Member ID'),
                     const SizedBox(height: 16),
 
@@ -296,8 +282,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                     ),
 
                     const SizedBox(height: 16),
-
-                    // Shipping Information subsection
                     Text(
                       'Shipping Information',
                       style: TextStyle(
@@ -451,8 +435,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                     ),
 
                     const Divider(height: 32),
-
-                    // Payment Summary section
                     _buildSectionHeader('Payment Summary'),
                     const SizedBox(height: 16),
 
@@ -509,8 +491,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                     ),
 
                     const SizedBox(height: 32),
-
-                    // Consent checkbox
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -541,8 +521,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                     ),
 
                     const SizedBox(height: 24),
-
-                    // Submit and Cancel buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -578,10 +556,7 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                             onPressed:
                                 _consentChecked
                                     ? () {
-                                      // Set the membership confirmed flag to true
                                       SharedState.isMembershipConfirmed = true;
-
-                                      // Show success message and navigate back to membership page
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(
@@ -592,8 +567,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
                                           backgroundColor: Colors.green,
                                         ),
                                       );
-
-                                      // Navigate back to membership page
                                       Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
@@ -638,7 +611,6 @@ class _ConfirmDetailsPageState extends State<ConfirmDetailsPage> {
     );
   }
 
-  // Helper method to build section headers
   Widget _buildSectionHeader(String title) {
     return Text(
       title,

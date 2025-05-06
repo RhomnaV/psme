@@ -29,15 +29,11 @@ class CreateAccountPage extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-
-            // Email Address Label
             const Text(
               'Email Address',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-
-            // Display User Email
             Text(
               email,
               style: const TextStyle(
@@ -48,7 +44,6 @@ class CreateAccountPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // First Name
             TextField(
               decoration: InputDecoration(
                 labelText: 'First Name',
@@ -59,7 +54,6 @@ class CreateAccountPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Last Name
             TextField(
               decoration: InputDecoration(
                 labelText: 'Last Name',
@@ -70,7 +64,6 @@ class CreateAccountPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Password
             TextField(
               obscureText: true,
               decoration: InputDecoration(
@@ -82,7 +75,6 @@ class CreateAccountPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Confirm Password
             TextField(
               obscureText: true,
               decoration: InputDecoration(

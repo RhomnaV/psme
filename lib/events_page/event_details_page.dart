@@ -17,12 +17,10 @@ class EventDetailsPage extends StatefulWidget {
 class EventDetailsPageState extends State<EventDetailsPage> {
   String? _selectedMembershipType;
   late YoutubePlayerController _youtubeController;
-   Map<String, dynamic> eventData = {};
-   
+  Map<String, dynamic> eventData = {};
 
-   late Future<List<Event>> futureEvents;
+  late Future<List<Event>> futureEvents;
 
-  
   // Membership types mapping
   final Map<int, String> _membershipLabels = {
     1: "Regular Member",
@@ -36,68 +34,73 @@ class EventDetailsPageState extends State<EventDetailsPage> {
   void initState() {
     super.initState();
     _fetchEventDetails();
-     futureEvents = ApiService.fetchEvents();
+    futureEvents = ApiService.fetchEvents();
 
     _youtubeController = YoutubePlayerController(
-      initialVideoId: 'dQw4w9WgXcQ',
-      flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
+      initialVideoId: 'Bm2EDpe4HiI',
+      flags: const YoutubePlayerFlags(autoPlay: true, mute: false),
     );
+
+    _youtubeController.addListener(() {
+      print("Player State: ${_youtubeController.value.playerState}");
+    });
   }
 
+  Future<void> _fetchEventDetails() async {
+    try {
+      Event? event = await ApiService.fetchEventByID(widget.eventId);
 
-Future<void> _fetchEventDetails() async {
-  try {
-    Event? event = await ApiService.fetchEventByID(widget.eventId);
+      if (event != null) {
+        Map<String, Map<String, dynamic>> membershipPricing = {};
 
-    if (event != null) {
-      Map<String, Map<String, dynamic>> membershipPricing = {};
+        if (event.eventPricing.isNotEmpty) {
+          for (var pricing in event.eventPricing) {
+            int memberTypeId = pricing.memberTypeId;
+            String? label;
 
-      if (event.eventPricing.isNotEmpty) {
-        for (var pricing in event.eventPricing) {
-          int memberTypeId = pricing.memberTypeId;
-          String? label;
+            // Match membership type logic from Angular
+            switch (memberTypeId) {
+              case 0:
+                label = "Guest / Non-member";
+                break;
+              case 1:
+                label = "Regular Member";
+                break;
+              case 2:
+                label = "Life / Associate Member";
+                break;
+              default:
+                label = "Unknown"; // Fallback for unknown types
+            }
 
-          // Match membership type logic from Angular
-          switch (memberTypeId) {
-            case 0:
-              label = "Guest / Non-member";
-              break;
-            case 1:
-              label = "Regular Member";
-              break;
-            case 2:
-              label = "Life / Associate Member";
-              break;
-            default:
-              label = "Unknown"; // Fallback for unknown types
-          }
-
-          if (label != "Unknown") {
-            membershipPricing[label.toLowerCase()] = {
-              "display": label,
-              "price": double.tryParse(pricing.amount) ?? 0.0,
-              "early_bird_price": double.tryParse(pricing.earlyBirdAmount) ?? 0.0,
-              "pwd_senior_price": double.tryParse(pricing.pwdSeniorAmount) ?? 0.0,
-              "new_board_passer_price": double.tryParse(pricing.newBoardPasserAmt) ?? 0.0,
-            };
+            if (label != "Unknown") {
+              membershipPricing[label.toLowerCase()] = {
+                "display": label,
+                "price": double.tryParse(pricing.amount) ?? 0.0,
+                "early_bird_price":
+                    double.tryParse(pricing.earlyBirdAmount) ?? 0.0,
+                "pwd_senior_price":
+                    double.tryParse(pricing.pwdSeniorAmount) ?? 0.0,
+                "new_board_passer_price":
+                    double.tryParse(pricing.newBoardPasserAmt) ?? 0.0,
+              };
+            }
           }
         }
+
+        setState(() {
+          eventData = event.toJson(); // ✅ Store event data
+          _membershipInfo = membershipPricing; // ✅ Update membership info
+        });
+
+        print("_membershipInfo: $_membershipInfo"); // Debugging output
+      } else {
+        print("Error: No event data found");
       }
-
-      setState(() {
-        eventData = event.toJson(); // ✅ Store event data
-        _membershipInfo = membershipPricing; // ✅ Update membership info
-      });
-
-      print("_membershipInfo: $_membershipInfo"); // Debugging output
-    } else {
-      print("Error: No event data found");
+    } catch (e) {
+      print("Error fetching event: $e");
     }
-  } catch (e) {
-    print("Error fetching event: $e");
   }
-}
-
 
   @override
   void dispose() {
@@ -114,8 +117,8 @@ Future<void> _fetchEventDetails() async {
   }
 
   Widget _buildEventDetailsContent(BuildContext context) {
-    if (eventData == null) { 
-    return const Center(child: CircularProgressIndicator());
+    if (eventData == null) {
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Container(
@@ -130,13 +133,13 @@ Future<void> _fetchEventDetails() async {
                 vertical: 16.0,
               ),
               child: Text(
-                  eventData!["name"] ?? "Event Title",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF0A0F44),
-                  ),
-                  textAlign: TextAlign.center,
+                eventData!["name"] ?? "Event Title",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0A0F44),
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
 
@@ -284,13 +287,15 @@ Future<void> _fetchEventDetails() async {
                                 color: Color(0xFF181F6C),
                               ),
                             ),
-                        Text(
-                            eventData!["type"] == 1 ? "Face-to-Face" : "Virtual",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade600,
+                            Text(
+                              eventData!["type"] == 1
+                                  ? "Face-to-Face"
+                                  : "Virtual",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                              ),
                             ),
-                          ),
                           ],
                         ),
                       ],
@@ -328,8 +333,8 @@ Future<void> _fetchEventDetails() async {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                            eventData!["shortdescription"] ?? "N/A",
-                            style: TextStyle(
+                          eventData!["shortdescription"] ?? "N/A",
+                          style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey.shade600,
                             height: 1.5,
@@ -344,40 +349,47 @@ Future<void> _fetchEventDetails() async {
 
             const SizedBox(height: 24),
             // Event logo/badge
-            Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: (eventData?.containsKey("eventimageurl") == true && eventData?["eventimageurl"]?.isNotEmpty == true)
-                    ? Image.network(
-                      
-                        eventData!["eventimageurl"],
-                        width: 150,
-                        height: 150,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return SizedBox(
-                            width: 150,
-                            height: 150,
-                            child: const Center(child: CircularProgressIndicator()),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          print("Error loading image: $error"); // Debugging
-                          return Image.asset(
-                            'assets/logo.png', // Fallback image
-                            width: 150,
-                            height: 150,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                width: 400,
+                height: 200,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child:
+                      (eventData?.containsKey("eventimageurl") == true &&
+                              eventData?["eventimageurl"]?.isNotEmpty == true)
+                          ? Image.network(
+                            eventData!["eventimageurl"],
+                            width: 400,
+                            height: 200,
                             fit: BoxFit.cover,
-                          );
-                        },
-                      )
-                    : Image.asset(
-                        'assets/logo.png', // Fallback for empty or null URL
-                        width: 150,
-                        height: 150,
-                        fit: BoxFit.cover,
-                      ),
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/logo.png', // Fallback image
+                                width: 400,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
+                          : Image.asset(
+                            'assets/logo.png',
+                            width: 400,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          ),
+                ),
               ),
             ),
 
@@ -413,7 +425,7 @@ Future<void> _fetchEventDetails() async {
 
             const SizedBox(height: 24),
 
-              // Other Events You May Like Section
+            // Other Events You May Like Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -436,7 +448,9 @@ Future<void> _fetchEventDetails() async {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
-                        return const Center(child: Text("Failed to load events"));
+                        return const Center(
+                          child: Text("Failed to load events"),
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Center(child: Text("No events available"));
                       }
@@ -448,23 +462,29 @@ Future<void> _fetchEventDetails() async {
                         child: Row(
                           children: [
                             const SizedBox(width: 12),
-                            ...events.map((event) => Padding(
-                                  padding: const EdgeInsets.only(right: 12),
-                                  child: _buildEventCard(
-                                    title: event.title,
-                                    date: event.formattedDate,
-                                    location: event.location,
-                                    imageAsset: event.imageUrl ?? "assets/logo.png",
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => EventDetailsPage(eventId: event.id), // Pass the event ID
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )),
+                            ...events.map(
+                              (event) => Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: _buildEventCard(
+                                  title: event.title,
+                                  date: event.formattedDate,
+                                  location: event.location,
+                                  imageAsset:
+                                      event.imageUrl ?? "assets/logo.png",
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => EventDetailsPage(
+                                              eventId: event.id,
+                                            ), // Pass the event ID
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -474,11 +494,9 @@ Future<void> _fetchEventDetails() async {
               ),
             ),
 
-
             const SizedBox(height: 24),
 
-
-          // Membership Type Selection
+            // Membership Type Selection
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
@@ -567,25 +585,17 @@ Future<void> _fetchEventDetails() async {
   }
 
   Widget _buildMembershipOption(String type) {
-    final membership = _membershipInfo[type] ?? {
-      "display": "Unknown",
-      "price": 0.0,
-    };
+    final membership =
+        _membershipInfo[type] ?? {"display": "Unknown", "price": 0.0};
 
     return ListTile(
       title: Text(
         membership["display"],
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       subtitle: Text(
         "₱${membership["price"].toStringAsFixed(2)}", // Format as currency
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.grey,
-        ),
+        style: const TextStyle(fontSize: 14, color: Colors.grey),
       ),
       leading: Radio<String>(
         value: type,
@@ -599,87 +609,87 @@ Future<void> _fetchEventDetails() async {
     );
   }
 
- Widget _buildEventCard({
-  required String title,
-  required String date,
-  required String location,
-  required String imageAsset,
-  required VoidCallback onTap, // Added onTap function
-}) {
-  return GestureDetector(
-    onTap: onTap, // Handles tap event
-    child: Container(
-      width: 200, // Fixed width for each card
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Event image (Supports both network & local assets)
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-            ),
-            child: imageAsset.startsWith("http") // Check if it's a network image
-                ? Image.network(
-                    imageAsset,
-                    height: 120,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        "assets/logo.png", // Fallback image if network fails
+  Widget _buildEventCard({
+    required String title,
+    required String date,
+    required String location,
+    required String imageAsset,
+    required VoidCallback onTap, // Added onTap function
+  }) {
+    return GestureDetector(
+      onTap: onTap, // Handles tap event
+      child: Container(
+        width: 200, // Fixed width for each card
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Event image (Supports both network & local assets)
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+              child:
+                  imageAsset.startsWith("http") // Check if it's a network image
+                      ? Image.network(
+                        imageAsset,
                         height: 120,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                      );
-                    },
-                  )
-                : Image.asset(
-                    imageAsset,
-                    height: 120,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-          ),
-
-          // Event details
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  date,
-                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  location,
-                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            "assets/logo.png", // Fallback image if network fails
+                            height: 120,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
+                      : Image.asset(
+                        imageAsset,
+                        height: 120,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
             ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
 
+            // Event details
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    date,
+                    style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    location,
+                    style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

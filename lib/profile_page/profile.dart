@@ -3,6 +3,8 @@ import '../base_page.dart';
 import '../navbar.dart';
 import '../footer.dart';
 import 'profile_professional.dart';
+import '../services/api_service.dart';
+import '../models/country.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -40,21 +42,13 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _selectedCountry;
   String? _selectedProvince;
   String? _selectedCity;
-  String? _selectedPhoneCode = '+62';
-  String? _selectedMobileCode = '+62';
+  String? _selectedPhoneCode;
+  String? _selectedMobileCode;
   String? _selectedSocialMedia = 'Facebook';
 
-  // Country code options
-  final List<String> _countryCodes = [
-    '+1',
-    '+44',
-    '+61',
-    '+62',
-    '+63',
-    '+65',
-    '+81',
-    '+86',
-  ];
+  // Country-related variables
+  List<Country> _countries = [];
+  bool _isLoadingCountries = true;
 
   // Social media platform options
   final List<String> _socialMediaPlatforms = [
@@ -76,6 +70,12 @@ class _ProfilePageState extends State<ProfilePage> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    _loadCountries(); // Fetch the country list when the page loads
+  }
+
+  @override
   void dispose() {
     _firstNameController.dispose();
     _middleNameController.dispose();
@@ -91,6 +91,49 @@ class _ProfilePageState extends State<ProfilePage> {
     _socialMediaIdController.dispose();
     _birthDateController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadCountries() async {
+    try {
+      List<Country> fetchedCountries = await ApiService.fetchCountry();
+
+      // Remove duplicates based on `mobileCode`
+      List<Country> uniqueCountries = fetchedCountries.toSet().toList();
+
+      setState(() {
+        _countries = uniqueCountries;
+        _isLoadingCountries = false;
+
+        // Set a default country (e.g., Philippines)
+        Country? defaultCountry = _countries.firstWhere(
+          (country) => country.mobileCode == "63",
+          orElse:
+              () =>
+                  _countries.isNotEmpty
+                      ? _countries.first
+                      : Country(
+                        id: 174,
+                        name: "Philippines",
+                        mobileCode: "63",
+                        code: "PH",
+                      ),
+        );
+        _selectedPhoneCode = defaultCountry.mobileCode;
+        _selectedMobileCode = defaultCountry.mobileCode;
+      });
+
+      print(_countries.map((country) => country.mobileCode).toList());
+    } catch (e) {
+      setState(() {
+        _isLoadingCountries = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load countries: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _togglePersonalEditMode() {
@@ -117,105 +160,10 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             children: [
               // User profile section
-              Container(
-                padding: const EdgeInsets.all(16),
-                alignment: Alignment.center,
-                child: Column(
-                  children: [
-                    const CircleAvatar(
-                      radius: 35,
-                      backgroundColor: Color(0xFFF0F0FF),
-                      backgroundImage: AssetImage('assets/profile.jpg'),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'KEVIN PARK',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'kevin@gmail.com',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _buildUserProfileSection(),
 
               // Personal/Professional tabs - using the format you provided
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 24),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _switchTab('Personal'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          decoration: BoxDecoration(
-                            color:
-                                _selectedTab == 'Personal'
-                                    ? const Color(0xFF181F6C)
-                                    : Colors.transparent,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(4),
-                              bottomLeft: Radius.circular(4),
-                            ),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Personal',
-                            style: TextStyle(
-                              color:
-                                  _selectedTab == 'Personal'
-                                      ? Colors.white
-                                      : Colors.black,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _switchTab('Professional'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          decoration: BoxDecoration(
-                            color:
-                                _selectedTab == 'Professional'
-                                    ? const Color(0xFF181F6C)
-                                    : Colors.transparent,
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(4),
-                              bottomRight: Radius.circular(4),
-                            ),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Professional',
-                            style: TextStyle(
-                              color:
-                                  _selectedTab == 'Professional'
-                                      ? Colors.white
-                                      : Colors.black,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _buildTabSwitcher(),
 
               const SizedBox(height: 16),
 
@@ -231,6 +179,103 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildUserProfileSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      alignment: Alignment.center,
+      child: Column(
+        children: [
+          const CircleAvatar(
+            radius: 35,
+            backgroundColor: Color(0xFFF0F0FF),
+            backgroundImage: AssetImage('assets/profile.jpg'),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'KEVIN PARK',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            'kevin@gmail.com',
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabSwitcher() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _switchTab('Personal'),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color:
+                      _selectedTab == 'Personal'
+                          ? const Color(0xFF181F6C)
+                          : Colors.transparent,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4),
+                    bottomLeft: Radius.circular(4),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  'Personal',
+                  style: TextStyle(
+                    color:
+                        _selectedTab == 'Personal'
+                            ? Colors.white
+                            : Colors.black,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _switchTab('Professional'),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color:
+                      _selectedTab == 'Professional'
+                          ? const Color(0xFF181F6C)
+                          : Colors.transparent,
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(4),
+                    bottomRight: Radius.circular(4),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  'Professional',
+                  style: TextStyle(
+                    color:
+                        _selectedTab == 'Professional'
+                            ? Colors.white
+                            : Colors.black,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -705,42 +750,65 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 5),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Country code dropdown
+              // Country code dropdown with flags
               Container(
-                width: 90,
+                width: 120,
                 height: 40,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: Colors.grey.shade400),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<String>(
-                      value: selectedCode,
-                      isExpanded: true,
-                      icon: const Icon(Icons.arrow_drop_down, size: 20),
-                      style: const TextStyle(color: Colors.black, fontSize: 13),
-                      dropdownColor: Colors.white,
-                      onChanged: onCodeChanged,
-                      items:
-                          _countryCodes.map<DropdownMenuItem<String>>((
-                            String value,
-                          ) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: const TextStyle(fontSize: 13),
-                              ),
-                            );
-                          }).toList(),
-                    ),
-                  ),
-                ),
+                child:
+                    _isLoadingCountries
+                        ? Center(child: CircularProgressIndicator())
+                        : DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedCode,
+                            isExpanded: true,
+                            alignment:
+                                Alignment.center, // Center the dropdown items
+                            icon: const Icon(Icons.arrow_drop_down, size: 20),
+                            iconSize:
+                                24, // Adjust the size of the dropdown icon
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                            ),
+                            dropdownColor: Colors.white,
+                            onChanged: onCodeChanged,
+                            items:
+                                _countries
+                                    .map(
+                                      (country) => DropdownMenuItem<String>(
+                                        value: country.mobileCode,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .center, // Center the contents
+                                          children: [
+                                            Text(
+                                              countryCodeToEmoji(country.code),
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              "+${country.mobileCode}",
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                        ),
               ),
               const SizedBox(width: 8),
               // Phone number field
@@ -1033,5 +1101,13 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
+  }
+
+  String countryCodeToEmoji(String countryCode) {
+    return countryCode.toUpperCase().split('').map((char) {
+      return String.fromCharCode(
+        0x1F1E6 + char.codeUnitAt(0) - 'A'.codeUnitAt(0),
+      );
+    }).join();
   }
 }

@@ -17,13 +17,11 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
     if (index == _selectedTabIndex) return;
 
     if (index == 1) {
-      // Navigate to PSME ID page
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const PsmeIdPage()),
       );
     } else if (index == 2) {
-      // Navigate to COGS page
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const CogsPage()),
@@ -76,7 +74,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Handle notification setup
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -112,7 +109,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      selectedIndex: 2, // Membership tab
+      selectedIndex: 2,
       body: Container(
         color: Colors.white,
         width: double.infinity,
@@ -120,7 +117,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Profile section
               const SizedBox(height: 24),
               const CircleAvatar(
                 radius: 40,
@@ -136,7 +132,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
 
-              // Membership tabs
               const SizedBox(height: 24),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
@@ -233,7 +228,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                 ),
               ),
 
-              // Membership details
               const SizedBox(height: 24),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
@@ -241,7 +235,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Regular Membership section with padding
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
@@ -253,7 +246,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Title and Active status
                           Row(
                             children: [
                               Column(
@@ -300,8 +292,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                           ),
 
                           const SizedBox(height: 24),
-
-                          // Registration date
                           Row(
                             children: [
                               const Icon(
@@ -330,8 +320,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                           ),
 
                           const SizedBox(height: 16),
-
-                          // Expiry date
                           Row(
                             children: [
                               const Icon(
@@ -360,8 +348,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                           ),
 
                           const SizedBox(height: 16),
-
-                          // Chapter
                           Row(
                             children: [
                               const Icon(
@@ -393,8 +379,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                     ),
 
                     const SizedBox(height: 24),
-
-                    // Certificate buttons
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -415,7 +399,6 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
 
                     const SizedBox(height: 16),
 
-                    // Certificate of Good Standing with dialog instead of tooltip
                     GestureDetector(
                       onTap: _showComingSoonDialog,
                       child: Container(

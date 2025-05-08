@@ -154,61 +154,6 @@ class SignUpPageState extends State<SignUpPage> {
             ),
             const SizedBox(height: 20),
 
-            const Text('or'),
-            const SizedBox(height: 10),
-
-            // Sign up with Google (With Tooltip)
-            Tooltip(
-              message: "Coming soon!",
-              child: ElevatedButton.icon(
-                onPressed: () {}, // No function yet
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 48),
-                  elevation: 0, // Remove shadow
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                icon: SvgPicture.asset(
-                  'assets/google.svg',
-                  width: 24,
-                  height: 24,
-                ),
-                label: const Text(
-                  'Sign up with Google',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Sign up with Facebook (With Tooltip)
-            Tooltip(
-              message: "Coming soon!",
-              child: ElevatedButton.icon(
-                onPressed: () {}, // No function yet
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 48),
-                  elevation: 0, // Remove shadow
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                icon: SvgPicture.asset(
-                  'assets/facebook.svg',
-                  width: 24,
-                  height: 24,
-                ),
-                label: const Text(
-                  'Sign up with Facebook',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
             // Already have an account? Login
             GestureDetector(
               onTap:

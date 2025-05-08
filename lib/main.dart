@@ -6,7 +6,7 @@ import 'login_page.dart';
 import 'sign_up_page.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensures async functions run before app starts
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
 
   bool isLoggedIn = await _checkLoginStatus();
@@ -14,11 +14,9 @@ void main() async {
   runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
-// Function to check if a user is logged in
 Future<bool> _checkLoginStatus() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final String? token = prefs.getString('access_token'); // Retrieve token
-
+  final String? token = prefs.getString('access_token');
   return token != null && token.isNotEmpty;
 }
 
@@ -30,7 +28,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: isLoggedIn ? const HomePage() : const IndexPage(), // Redirect based on login status
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        dialogBackgroundColor: Colors.white,
+        cardColor: Colors.white,
+        dropdownMenuTheme: DropdownMenuThemeData(
+          menuStyle: MenuStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.white),
+          ),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black),
+          titleTextStyle: TextStyle(color: Colors.black),
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black),
+          bodyMedium: TextStyle(color: Colors.black),
+          bodySmall: TextStyle(color: Colors.black),
+        ),
+      ),
+      home: isLoggedIn ? const HomePage() : const IndexPage(),
     );
   }
 }
@@ -46,15 +64,15 @@ class IndexPage extends StatelessWidget {
           'PSME',
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.w900,
-            color: Colors.black, 
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
           ),
         ),
-        centerTitle: true, 
-        backgroundColor: Colors.transparent, 
-        elevation: 0, 
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      
+
       backgroundColor: Colors.white,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -67,7 +85,11 @@ class IndexPage extends StatelessWidget {
                   'assets/logo.png',
                   height: 140,
                   errorBuilder: (context, error, stackTrace) {
-                    return const Icon(Icons.image_not_supported, size: 80, color: Colors.grey);
+                    return const Icon(
+                      Icons.image_not_supported,
+                      size: 80,
+                      color: Colors.grey,
+                    );
                   },
                 ),
                 const SizedBox(height: 20),
@@ -76,9 +98,9 @@ class IndexPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                     color: Colors.black,
-                    height: 1.2, // Adjusts spacing between lines
+                    height: 1.2,
                   ),
                 ),
 
@@ -91,11 +113,14 @@ class IndexPage extends StatelessWidget {
                       backgroundColor: const Color(0xFF181F6C),
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3), // Less rounded corners
+                        borderRadius: BorderRadius.circular(3),
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignUpPage()),
+                      );
                     },
                     child: const Text(
                       'Create Account',
@@ -113,11 +138,14 @@ class IndexPage extends StatelessWidget {
                       side: const BorderSide(color: Color(0xFF0A0F44)),
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3), 
+                        borderRadius: BorderRadius.circular(3),
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
                     },
                     child: const Text(
                       'Login',
@@ -130,14 +158,17 @@ class IndexPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                   Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()), 
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
                     );
                   },
                   child: const Text(
                     'Continue as Guest',
-                    style: TextStyle(fontSize: 14, color: Color.fromARGB(136, 6, 6, 6)),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color.fromARGB(136, 6, 6, 6),
+                    ),
                   ),
                 ),
               ],

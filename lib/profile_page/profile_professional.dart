@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../models/country.dart';
 
 class ProfessionalTabContent extends StatefulWidget {
   const ProfessionalTabContent({super.key});
@@ -35,20 +37,12 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
   String? _selectedJob;
   String? _selectedIndustry;
   String? _selectedDegree;
-  String? _selectedPhoneCode = '+62';
-  String? _selectedFaxCode = '+62';
 
-  // Country code options
-  final List<String> _countryCodes = [
-    '+1',
-    '+44',
-    '+61',
-    '+62',
-    '+63',
-    '+65',
-    '+81',
-    '+86',
-  ];
+  // Country-related variables for phone and fax
+  List<Country> _countries = [];
+  String? _selectedPhoneCode;
+  String? _selectedFaxCode;
+  bool _isLoadingCountries = true;
 
   // License form controllers
   final _licenseTypeController = TextEditingController();
@@ -79,6 +73,12 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadCountries(); // Fetch the country list when the page loads
+  }
+
+  @override
   void dispose() {
     _organizationController.dispose();
     _professionIdController.dispose();
@@ -103,101 +103,51 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
     super.dispose();
   }
 
+  Future<void> _loadCountries() async {
+    try {
+      List<Country> fetchedCountries = await ApiService.fetchCountry();
+
+      // Remove duplicates based on `mobileCode`
+      List<Country> uniqueCountries = fetchedCountries.toSet().toList();
+
+      setState(() {
+        _countries = uniqueCountries;
+        _isLoadingCountries = false;
+
+        // Set a default country (e.g., Philippines)
+        Country? defaultCountry = _countries.firstWhere(
+          (country) => country.mobileCode == "63",
+          orElse:
+              () =>
+                  _countries.isNotEmpty
+                      ? _countries.first
+                      : Country(
+                        id: 174,
+                        name: "Philippines",
+                        mobileCode: "63",
+                        code: "PH",
+                      ),
+        );
+        _selectedPhoneCode = defaultCountry.mobileCode;
+        _selectedFaxCode = defaultCountry.mobileCode;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingCountries = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load countries: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   void _toggleProfessionalEditMode() {
     setState(() {
       _isEditingProfessional = !_isEditingProfessional;
     });
-  }
-
-  void _showAddLicenseDialog() {
-    // Clear form fields
-    _licenseTypeController.clear();
-    _licenseNumberController.clear();
-    _registrationDateController.clear();
-    _expiryDateController.clear();
-
-    showDialog(
-      context: context,
-      barrierColor: Colors.black54,
-      builder:
-          (context) => _buildLicenseDialog(
-            title: 'Add New License',
-            onSave: () {
-              // Add new license
-              setState(() {
-                _licenses.add({
-                  'type': _licenseTypeController.text,
-                  'number': _licenseNumberController.text,
-                  'registration': _registrationDateController.text,
-                  'expiration': _expiryDateController.text,
-                });
-              });
-              Navigator.pop(context);
-            },
-          ),
-    );
-  }
-
-  void _showEditLicenseDialog(int index) {
-    // Pre-fill form fields with existing license data
-    final license = _licenses[index];
-    _licenseTypeController.text = license['type'] ?? '';
-    _licenseNumberController.text = license['number'] ?? '';
-    _registrationDateController.text = license['registration'] ?? '';
-    _expiryDateController.text = license['expiration'] ?? '';
-
-    showDialog(
-      context: context,
-      barrierColor: Colors.black54,
-      builder:
-          (context) => _buildLicenseDialog(
-            title: 'Edit License',
-            onSave: () {
-              // Update existing license
-              setState(() {
-                _licenses[index] = {
-                  'type': _licenseTypeController.text,
-                  'number': _licenseNumberController.text,
-                  'registration': _registrationDateController.text,
-                  'expiration': _expiryDateController.text,
-                };
-              });
-              Navigator.pop(context);
-            },
-          ),
-    );
-  }
-
-  void _deleteLicense(int index) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            backgroundColor: Colors.white,
-            title: const Text('Delete License'),
-            content: const Text(
-              'Are you sure you want to delete this license?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _licenses.removeAt(index);
-                  });
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          ),
-    );
   }
 
   @override
@@ -210,101 +160,6 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
                 ? _buildProfessionalEditForm()
                 : _buildProfessionalView(),
       ),
-    );
-  }
-
-  Widget _buildProfessionalView() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Professional Information container
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Professional Information header with edit button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Professional Information',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.edit,
-                      color: Color(0xFF181F6C),
-                      size: 20,
-                    ),
-                    onPressed: _toggleProfessionalEditMode,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        // PRC Licenses container
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // PRC Licenses section with add button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'PRC Licenses',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  InkWell(
-                    onTap: _showAddLicenseDialog,
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF181F6C),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              // License cards - now clickable to edit with delete button
-              ..._licenses.asMap().entries.map(
-                (entry) => _buildLicenseItem(entry.value, entry.key),
-              ),
-            ],
-          ),
-        ),
-
-        // Add some bottom padding
-        const SizedBox(height: 16),
-      ],
     );
   }
 
@@ -584,6 +439,236 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
     );
   }
 
+  Widget _buildPhoneFieldWithCountryCode({
+    required String label,
+    required TextEditingController controller,
+    required String hintText,
+    required String? selectedCode,
+    required Function(String?) onCodeChanged,
+    bool required = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: TextSpan(
+              text: label,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              children:
+                  required
+                      ? const [
+                        TextSpan(
+                          text: ' *',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ]
+                      : [],
+            ),
+          ),
+          const SizedBox(height: 5),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Country code dropdown with flags
+              Container(
+                width: 120,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey.shade400),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child:
+                    _isLoadingCountries
+                        ? Center(child: CircularProgressIndicator())
+                        : DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedCode,
+                            isExpanded: true,
+                            alignment:
+                                Alignment.center, // Center the dropdown items
+                            icon: const Icon(Icons.arrow_drop_down, size: 20),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                            ),
+                            dropdownColor: Colors.white,
+                            onChanged: onCodeChanged,
+                            items:
+                                _countries
+                                    .map(
+                                      (country) => DropdownMenuItem<String>(
+                                        value: country.mobileCode,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .center, // Center the contents
+                                          children: [
+                                            Text(
+                                              countryCodeToEmoji(country.code),
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              "+${country.mobileCode}",
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                        ),
+              ),
+              const SizedBox(width: 8),
+              // Phone number field
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: TextFormField(
+                    controller: controller,
+                    keyboardType: TextInputType.phone,
+                    style: const TextStyle(fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: hintText,
+                      hintStyle: const TextStyle(fontSize: 13),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String countryCodeToEmoji(String countryCode) {
+    return countryCode.toUpperCase().split('').map((char) {
+      return String.fromCharCode(
+        0x1F1E6 + char.codeUnitAt(0) - 'A'.codeUnitAt(0),
+      );
+    }).join();
+  }
+
+  Widget _buildProfessionalView() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Professional Information container
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Professional Information header with edit button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Professional Information',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Color(0xFF181F6C),
+                      size: 20,
+                    ),
+                    onPressed: _toggleProfessionalEditMode,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // PRC Licenses container
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // PRC Licenses section with add button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'PRC Licenses',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  InkWell(
+                    onTap: _showAddLicenseDialog,
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF181F6C),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              // License cards - now clickable to edit with delete button
+              ..._licenses.asMap().entries.map(
+                (entry) => _buildLicenseItem(entry.value, entry.key),
+              ),
+            ],
+          ),
+        ),
+
+        // Add some bottom padding
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
   Widget _buildLicenseItem(Map<String, String> license, int index) {
     return InkWell(
       onTap: () => _showEditLicenseDialog(index),
@@ -631,6 +716,97 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showAddLicenseDialog() {
+    // Clear form fields
+    _licenseTypeController.clear();
+    _licenseNumberController.clear();
+    _registrationDateController.clear();
+    _expiryDateController.clear();
+
+    showDialog(
+      context: context,
+      barrierColor: Colors.black54,
+      builder:
+          (context) => _buildLicenseDialog(
+            title: 'Add New License',
+            onSave: () {
+              // Add new license
+              setState(() {
+                _licenses.add({
+                  'type': _licenseTypeController.text,
+                  'number': _licenseNumberController.text,
+                  'registration': _registrationDateController.text,
+                  'expiration': _expiryDateController.text,
+                });
+              });
+              Navigator.pop(context);
+            },
+          ),
+    );
+  }
+
+  void _showEditLicenseDialog(int index) {
+    // Pre-fill form fields with existing license data
+    final license = _licenses[index];
+    _licenseTypeController.text = license['type'] ?? '';
+    _licenseNumberController.text = license['number'] ?? '';
+    _registrationDateController.text = license['registration'] ?? '';
+    _expiryDateController.text = license['expiration'] ?? '';
+
+    showDialog(
+      context: context,
+      barrierColor: Colors.black54,
+      builder:
+          (context) => _buildLicenseDialog(
+            title: 'Edit License',
+            onSave: () {
+              // Update existing license
+              setState(() {
+                _licenses[index] = {
+                  'type': _licenseTypeController.text,
+                  'number': _licenseNumberController.text,
+                  'registration': _registrationDateController.text,
+                  'expiration': _expiryDateController.text,
+                };
+              });
+              Navigator.pop(context);
+            },
+          ),
+    );
+  }
+
+  void _deleteLicense(int index) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: Colors.white,
+            title: const Text('Delete License'),
+            content: const Text(
+              'Are you sure you want to delete this license?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _licenses.removeAt(index);
+                  });
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
     );
   }
 
@@ -939,112 +1115,6 @@ class _ProfessionalTabContentState extends State<ProfessionalTabContent> {
                 fillColor: readOnly ? Colors.grey.shade200 : Colors.white,
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPhoneFieldWithCountryCode({
-    required String label,
-    required TextEditingController controller,
-    required String hintText,
-    required String? selectedCode,
-    required Function(String?) onCodeChanged,
-    bool required = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-            text: TextSpan(
-              text: label,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-              children:
-                  required
-                      ? const [
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ]
-                      : [],
-            ),
-          ),
-          const SizedBox(height: 5),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Country code dropdown
-              Container(
-                width: 90,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton<String>(
-                      value: selectedCode,
-                      isExpanded: true,
-                      icon: const Icon(Icons.arrow_drop_down, size: 20),
-                      style: const TextStyle(color: Colors.black, fontSize: 13),
-                      dropdownColor: Colors.white,
-                      onChanged: onCodeChanged,
-                      items:
-                          _countryCodes.map<DropdownMenuItem<String>>((
-                            String value,
-                          ) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: const TextStyle(fontSize: 13),
-                              ),
-                            );
-                          }).toList(),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Phone number field
-              Expanded(
-                child: SizedBox(
-                  height: 40,
-                  child: TextFormField(
-                    controller: controller,
-                    keyboardType: TextInputType.phone,
-                    style: const TextStyle(fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: hintText,
-                      hintStyle: const TextStyle(fontSize: 13),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ),
         ],
       ),

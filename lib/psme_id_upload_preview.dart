@@ -36,11 +36,10 @@ class _PsmeIdUploadPreviewState extends State<PsmeIdUploadPreview> {
     setState(() {
       _showSuccessScreen = true;
     });
-    // Call the onSubmit callback after showing success screen
+
     widget.onSubmit();
   }
 
-  // Temporary function to toggle to Digital ID screen - can be removed later
   void _goToDigitalId() {
     setState(() {
       _showSuccessScreen = false;
@@ -79,13 +78,9 @@ class _PsmeIdUploadPreviewState extends State<PsmeIdUploadPreview> {
     );
   }
 
-  // Change the _buildSuccessScreen method to make the entire page clickable
   Widget _buildSuccessScreen() {
-    // Make the entire success screen clickable to navigate to Digital ID
     return GestureDetector(
-      // Navigate to Digital ID screen when tapped anywhere
       onTap: () {
-        // Comment: This toggles to the Digital ID screen - remove this once proper navigation is implemented
         setState(() {
           _showSuccessScreen = false;
           _showDigitalIdScreen = true;
@@ -97,7 +92,6 @@ class _PsmeIdUploadPreviewState extends State<PsmeIdUploadPreview> {
           _buildPageTitle('PSME ID'),
           const SizedBox(height: 16),
 
-          // Application steps - only step 2 is active in success screen
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -179,7 +173,6 @@ class _PsmeIdUploadPreviewState extends State<PsmeIdUploadPreview> {
     );
   }
 
-  // Change the _buildDigitalIdScreen method to make the message clickable and update the method
   Widget _buildDigitalIdScreen() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -187,7 +180,6 @@ class _PsmeIdUploadPreviewState extends State<PsmeIdUploadPreview> {
         _buildPageTitle('PSME ID'),
         const SizedBox(height: 16),
 
-        // Application steps - step 3 is active in digital ID screen
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),

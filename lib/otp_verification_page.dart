@@ -31,13 +31,11 @@ class OTPVerificationPageState extends State<OTPVerificationPage> {
       if (!mounted) return;
 
       if (response['resultKey'] == 1) {
-        // ✅ OTP is correct, navigate to Account Created page
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const AccountCreatedPage()),
         );
       } else {
-        // ❌ Show error message if OTP is incorrect
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(response['message'] ?? 'Invalid OTP')),
         );
@@ -87,7 +85,6 @@ class OTPVerificationPageState extends State<OTPVerificationPage> {
             ),
             const SizedBox(height: 20),
 
-            // OTP TextField
             TextField(
               controller: otpController,
               keyboardType: TextInputType.number,
@@ -151,52 +148,6 @@ class OTPVerificationPageState extends State<OTPVerificationPage> {
               child: const Text(
                 'Resend OTP',
                 style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Sign up with Google
-            ElevatedButton.icon(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 48),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              icon: SvgPicture.asset(
-                'assets/google.svg',
-                width: 24,
-                height: 24,
-              ),
-              label: const Text(
-                'Sign up with Google',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Sign up with Facebook
-            ElevatedButton.icon(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 48),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              icon: SvgPicture.asset(
-                'assets/facebook.svg',
-                width: 24,
-                height: 24,
-              ),
-              label: const Text(
-                'Sign up with Facebook',
-                style: TextStyle(color: Colors.black),
               ),
             ),
           ],

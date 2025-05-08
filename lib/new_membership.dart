@@ -10,7 +10,6 @@ class NewMembershipPage extends StatefulWidget {
 }
 
 class _NewMembershipPageState extends State<NewMembershipPage> {
-  // Form controllers
   final _membershipTypeController = TextEditingController();
 
   @override
@@ -22,9 +21,9 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      selectedIndex: 2, // Membership tab
+      selectedIndex: 2,
       body: Container(
-        color: Colors.white, // Ensure white background
+        color: Colors.white,
         width: double.infinity,
         height: double.infinity,
         child: SingleChildScrollView(
@@ -35,7 +34,6 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
               children: [
                 const SizedBox(height: 20),
 
-                // New Membership title - centered
                 const Text(
                   'New Membership',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -43,7 +41,6 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
 
                 const SizedBox(height: 20),
 
-                // Membership Type dropdown
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -67,7 +64,7 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                     ),
                     const SizedBox(height: 8),
                     Container(
-                      height: 40, // Fixed height for consistency
+                      height: 40,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300),
                         borderRadius: BorderRadius.circular(4),
@@ -114,7 +111,6 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
 
                 const SizedBox(height: 16),
 
-                // Chapter dropdown
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -138,7 +134,7 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                     ),
                     const SizedBox(height: 8),
                     Container(
-                      height: 40, // Fixed height for consistency
+                      height: 40,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300),
                         borderRadius: BorderRadius.circular(4),
@@ -180,8 +176,6 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                 ),
 
                 const SizedBox(height: 24),
-
-                // Personal Information section - no container, just a title
                 const Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -192,28 +186,24 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
 
                 const SizedBox(height: 16),
 
-                // Middle Name field
                 _buildFormField(
                   label: 'Middle Name',
                   hintText: 'Enter your middle name',
                   required: true,
                 ),
 
-                // Suffix field
                 _buildFormField(
                   label: 'Suffix',
                   hintText: 'E.g., Jr., Sr., III',
                   required: true,
                 ),
 
-                // Birth Date field
                 _buildDateField(
                   label: 'Birth Date',
                   hintText: 'MM/DD/YYYY',
                   required: true,
                 ),
 
-                // Mobile Number field
                 _buildPhoneField(
                   label: 'Mobile Number',
                   hintText: 'Enter your mobile number',
@@ -222,13 +212,11 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
 
                 const SizedBox(height: 24),
 
-                // Next button - yellow color
                 SizedBox(
                   width: double.infinity,
-                  height: 44, // Smaller height to match design
+                  height: 44,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Validate form
                       if (_membershipTypeController.text.isNotEmpty) {
                         Navigator.push(
                           context,
@@ -237,7 +225,6 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                           ),
                         );
                       } else {
-                        // Show error
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Please select a membership type'),
@@ -247,7 +234,7 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFFD600), // Yellow color
+                      backgroundColor: const Color(0xFFFFD600),
                       foregroundColor: Colors.black,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -306,7 +293,7 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
           ),
           const SizedBox(height: 6),
           Container(
-            height: 40, // Fixed height for consistency
+            height: 40,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(4),
@@ -318,14 +305,13 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 10,
-                ), // Adjusted vertical padding
+                ),
                 border: InputBorder.none,
                 hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-                isDense: true, // Makes the input field more compact
+                isDense: true,
               ),
               style: const TextStyle(fontSize: 14),
-              textAlignVertical:
-                  TextAlignVertical.center, // Center text vertically
+              textAlignVertical: TextAlignVertical.center,
             ),
           ),
         ],
@@ -366,7 +352,7 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
           ),
           const SizedBox(height: 6),
           Container(
-            height: 40, // Fixed height for consistency
+            height: 40,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(4),
@@ -435,10 +421,9 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
           const SizedBox(height: 6),
           Row(
             children: [
-              // Country code dropdown
               Container(
                 width: 80,
-                height: 40, // Fixed height for consistency
+                height: 40,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(4),
@@ -449,7 +434,7 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                       width: 24,
                       height: 16,
                       margin: const EdgeInsets.only(left: 8),
-                      color: Colors.red, // Red flag for Philippines
+                      color: Colors.red,
                     ),
                     const SizedBox(width: 4),
                     const Text('+62', style: TextStyle(fontSize: 14)),
@@ -458,10 +443,10 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
                 ),
               ),
               const SizedBox(width: 8),
-              // Phone number field
+
               Expanded(
                 child: Container(
-                  height: 40, // Fixed height for consistency
+                  height: 40,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(4),

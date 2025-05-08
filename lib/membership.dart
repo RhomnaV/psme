@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'base_page.dart';
 import 'new_membership.dart';
 import 'shared_state.dart';
-import 'active_membership_page.dart'; // Import the new page
+import 'active_membership_page.dart';
 
 class MembershipPage extends StatefulWidget {
   const MembershipPage({super.key});
@@ -14,9 +14,7 @@ class MembershipPage extends StatefulWidget {
 class _MembershipPageState extends State<MembershipPage> {
   @override
   Widget build(BuildContext context) {
-    // If membership is confirmed, navigate to the active membership page
     if (SharedState.isMembershipConfirmed) {
-      // Use a post-frame callback to avoid build issues
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacement(
           context,
@@ -24,42 +22,33 @@ class _MembershipPageState extends State<MembershipPage> {
         );
       });
 
-      // Return a loading indicator while navigating
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    // Otherwise, show the default membership UI
     return BasePage(
-      selectedIndex: 2, // Membership tab
+      selectedIndex: 2,
       body: Container(
-        color: Colors.white, // Explicit white background
+        color: Colors.white,
         width: double.infinity,
-        height: double.infinity, // Ensure it fills the entire height
+        height: double.infinity,
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Main content with proper spacing
               Container(
-                color:
-                    Colors
-                        .white, // Additional white background to ensure coverage
+                color: Colors.white,
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
                     children: [
                       const SizedBox(height: 30),
-
-                      // Profile image - smaller size to match design
                       const CircleAvatar(
-                        radius: 30, // Smaller radius
+                        radius: 30,
                         backgroundColor: Colors.white,
                         backgroundImage: AssetImage('assets/profile.jpg'),
                       ),
 
                       const SizedBox(height: 16),
-
-                      // User name - smaller font size
                       const Text(
                         'KEVIN PARK',
                         style: TextStyle(
@@ -68,8 +57,6 @@ class _MembershipPageState extends State<MembershipPage> {
                           color: Colors.black,
                         ),
                       ),
-
-                      // Email - smaller and lighter
                       const Text(
                         'kevin@gmail.com',
                         style: TextStyle(fontSize: 12, color: Colors.grey),
@@ -77,7 +64,6 @@ class _MembershipPageState extends State<MembershipPage> {
 
                       const SizedBox(height: 30),
 
-                      // Society text - left aligned in the center column
                       const Align(
                         alignment: Alignment.center,
                         child: Text(
@@ -90,7 +76,6 @@ class _MembershipPageState extends State<MembershipPage> {
                         ),
                       ),
 
-                      // Membership text - left aligned in the center column
                       const Align(
                         alignment: Alignment.center,
                         child: Text(
@@ -101,10 +86,9 @@ class _MembershipPageState extends State<MembershipPage> {
 
                       const SizedBox(height: 16),
 
-                      // New Membership button - smaller width
                       SizedBox(
-                        width: 150, // Smaller width to match design
-                        height: 36, // Explicit height
+                        width: 150,
+                        height: 36,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -115,9 +99,7 @@ class _MembershipPageState extends State<MembershipPage> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                              0xFF181F6C,
-                            ), // Dark blue
+                            backgroundColor: const Color(0xFF181F6C),
                             foregroundColor: Colors.white,
                             elevation: 0,
                             padding: EdgeInsets.zero,
@@ -134,7 +116,6 @@ class _MembershipPageState extends State<MembershipPage> {
 
                       const SizedBox(height: 30),
 
-                      // Already have membership text - center aligned
                       const Text(
                         'If you already have a membership, you may activate',
                         textAlign: TextAlign.center,
@@ -148,18 +129,13 @@ class _MembershipPageState extends State<MembershipPage> {
 
                       const SizedBox(height: 16),
 
-                      // Claim Membership button - smaller width
                       SizedBox(
-                        width: 150, // Smaller width to match design
-                        height: 36, // Explicit height
+                        width: 150,
+                        height: 36,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // Handle claim membership
-                          },
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                              0xFFE0E0E0,
-                            ), // Light gray
+                            backgroundColor: const Color(0xFFE0E0E0),
                             foregroundColor: Colors.black87,
                             elevation: 0,
                             padding: EdgeInsets.zero,
@@ -174,7 +150,6 @@ class _MembershipPageState extends State<MembershipPage> {
                         ),
                       ),
 
-                      // Add extra space at the bottom to ensure white background extends
                       const SizedBox(height: 100),
                     ],
                   ),

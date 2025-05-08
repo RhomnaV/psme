@@ -23,13 +23,9 @@ class HomePageState extends State<HomePage> {
     futureEvents = ApiService.fetchEvents();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return BasePage(
-      selectedIndex: 0, // Home tab
-      body: _buildHomeContent(context),
-    );
+    return BasePage(selectedIndex: 0, body: _buildHomeContent(context));
   }
 
   Widget _buildHomeContent(BuildContext context) {
@@ -39,7 +35,6 @@ class HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Grid of images
             GridView.count(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
@@ -69,7 +64,6 @@ class HomePageState extends State<HomePage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Navigate to Events page when View All is clicked
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -87,7 +81,6 @@ class HomePageState extends State<HomePage> {
 
             const SizedBox(height: 10),
 
-            // Use FutureBuilder to display dynamic event cards
             FutureBuilder<List<Event>>(
               future: futureEvents,
               builder: (context, snapshot) {
@@ -102,12 +95,19 @@ class HomePageState extends State<HomePage> {
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: snapshot.data!.map((event) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: _buildEventCard(context, event.id, event.title, event.formattedDate, event.imageUrl),
-                      );
-                    }).toList(),
+                    children:
+                        snapshot.data!.map((event) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: _buildEventCard(
+                              context,
+                              event.id,
+                              event.title,
+                              event.formattedDate,
+                              event.imageUrl,
+                            ),
+                          );
+                        }).toList(),
                   ),
                 );
               },
@@ -124,7 +124,7 @@ class HomePageState extends State<HomePage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Stack(
@@ -132,7 +132,7 @@ class HomePageState extends State<HomePage> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.asset(
-              'assets/community_bg.jpg',
+              'assets/ribbon-cutting.jpg',
               width: double.infinity,
               height: 150,
               fit: BoxFit.cover,
@@ -141,41 +141,50 @@ class HomePageState extends State<HomePage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(14.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  'Join the PSME community',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                const Center(
+                  child: Text(
+                    'Join the PSME community',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 25,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'Access exclusive resources to events and contents',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
+                const Center(
+                  child: Text(
+                    'Access exclusive resources to events and contents',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SignUpPage(),
+                Center(
+                  child: ElevatedButton(
+                    onPressed:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpPage(),
+                          ),
+                        ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1A237E),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
+                      textStyle: const TextStyle(fontSize: 12),
                     ),
+                    child: const Text('BE A MEMBER NOW'),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A0F44),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    textStyle: const TextStyle(fontSize: 12),
-                  ),
-                  child: const Text('BE A MEMBER NOW'),
                 ),
               ],
             ),
@@ -187,94 +196,116 @@ class HomePageState extends State<HomePage> {
 
   Widget _buildImageCard(String imagePath) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide.none,
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: Image.asset(imagePath, fit: BoxFit.cover),
+        child: Container(
+          color: Colors.white,
+          child: Image.asset(imagePath, fit: BoxFit.cover),
+        ),
       ),
     );
   }
 
-Widget _buildEventCard(BuildContext context, int id, String title, String date, String imageUrl) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EventDetailsPage(eventId: id),
-        ),
-      );
-    },
-    child: Container(
-      width: 150,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(10),
-              topRight: Radius.circular(10),
-            ),
-            child: imageUrl.isNotEmpty
-                ? Image.network(
-                    imageUrl,
-                    width: 150,
-                    height: 100,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return SizedBox(
-                        width: 150,
-                        height: 100,
-                        child: const Center(child: CircularProgressIndicator()),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      print("Error loading image: $error"); // Debugging
-                      return Image.asset(
-                        'assets/logo.png', // Fallback image
-                        width: 150,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  )
-                : Image.asset(
-                    'assets/logo.png', // Fallback for empty URL
-                    width: 150,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  date,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+  Widget _buildEventCard(
+    BuildContext context,
+    int id,
+    String title,
+    String date,
+    String imageUrl,
+  ) {
+    // Sizes of boxesszsz
+    const double cardWidth = 150.0;
+    const double cardHeight = 200.0;
+    const double imageHeight = 100.0;
 
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventDetailsPage(eventId: id),
+          ),
+        );
+      },
+      child: Container(
+        width: cardWidth,
+        height: cardHeight,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              child:
+                  imageUrl.isNotEmpty
+                      ? Image.network(
+                        imageUrl,
+                        width: cardWidth,
+                        height: imageHeight,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return SizedBox(
+                            width: cardWidth,
+                            height: imageHeight,
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          print("Error loading image: $error");
+                          return Image.asset(
+                            'assets/logo.png',
+                            width: cardWidth,
+                            height: imageHeight,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
+                      : Image.asset(
+                        'assets/logo.png',
+                        width: cardWidth,
+                        height: imageHeight,
+                        fit: BoxFit.cover,
+                      ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    date,
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

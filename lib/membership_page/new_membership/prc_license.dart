@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'base_page.dart';
+import '../../header_footer/base_page.dart';
 import 'psme_id.dart';
 
 class PRCLicensePage extends StatefulWidget {

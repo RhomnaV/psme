@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'navbar.dart';
 import 'footer.dart';
-import 'home_page.dart';
-import 'profile_page/profile.dart';
-import 'membership.dart';
+import '../home_page.dart';
+import '../profile_page/profile.dart';
+import '../membership_page/membership.dart';
 
 class BasePage extends StatefulWidget {
   final Widget body;

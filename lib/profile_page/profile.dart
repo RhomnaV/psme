@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../base_page.dart';
-import '../navbar.dart';
-import '../footer.dart';
+import '../header_footer/base_page.dart';
+import '../header_footer/navbar.dart';
+import '../header_footer/footer.dart';
 import 'profile_professional.dart';
 import '../services/api_service.dart';
 import '../models/country.dart';

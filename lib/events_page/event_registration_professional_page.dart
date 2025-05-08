@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../base_page.dart';
+import '../header_footer/base_page.dart';
 import '../services/api_service.dart';
 import '../models/chapter.dart';
 import 'other_details.dart';

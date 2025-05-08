@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'base_page.dart';
-import 'new_membership.dart';
-import 'shared_state.dart';
+import '../header_footer/base_page.dart';
+import 'new_membership/new_membership.dart';
+import '../shared_state.dart';
 import 'active_membership_page.dart';
 
 class MembershipPage extends StatefulWidget {

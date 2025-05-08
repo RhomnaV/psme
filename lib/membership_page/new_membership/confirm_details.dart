@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'base_page.dart';
-import 'membership.dart';
-import 'shared_state.dart';
+import '../../header_footer/base_page.dart';
+import '../membership.dart';
+import '../../shared_state.dart';
 
 class ConfirmDetailsPage extends StatefulWidget {
   const ConfirmDetailsPage({super.key});

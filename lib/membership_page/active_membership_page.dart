@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'base_page.dart';
-import 'psme_id_page.dart';
-import 'cogs_page.dart';
+import '../header_footer/base_page.dart';
+import '../psme_id_page/psme_id_page.dart';
+import '../cogs_page/cogs_page.dart';
 
 class ActiveMembershipPage extends StatefulWidget {
   const ActiveMembershipPage({super.key});

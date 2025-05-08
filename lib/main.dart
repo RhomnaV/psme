@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'home_page.dart';
-import 'login_page.dart';
-import 'sign_up_page.dart';
+import 'log_in_page/login_page.dart';
+import 'sign_up/sign_up_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

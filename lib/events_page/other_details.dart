@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../base_page.dart';
+import '../header_footer/base_page.dart';
 import '../home_page.dart';
 
 class OtherDetailsPage extends StatefulWidget {

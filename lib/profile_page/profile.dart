@@ -5,6 +5,7 @@ import '../footer.dart';
 import 'profile_professional.dart';
 import '../services/api_service.dart';
 import '../models/country.dart';
+import '../models/chapter.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -38,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _selectedSuffix;
   String? _selectedMaritalStatus;
   String? _selectedBloodType;
-  String? _selectedChapter = 'Marinduque';
+  String? _selectedChapter;
   String? _selectedCountry;
   String? _selectedProvince;
   String? _selectedCity;
@@ -49,6 +50,10 @@ class _ProfilePageState extends State<ProfilePage> {
   // Country-related variables
   List<Country> _countries = [];
   bool _isLoadingCountries = true;
+
+  // Chapter-related variables
+  List<Chapter> _chapters = [];
+  bool _isLoadingChapters = true;
 
   // Social media platform options
   final List<String> _socialMediaPlatforms = [
@@ -73,6 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _loadCountries(); // Fetch the country list when the page loads
+    _loadChapters(); // Fetch the chapter list
   }
 
   @override
@@ -130,6 +136,33 @@ class _ProfilePageState extends State<ProfilePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to load countries: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _loadChapters() async {
+    try {
+      List<Chapter> fetchedChapters = await ApiService.fetchChapters();
+
+      setState(() {
+        _chapters = fetchedChapters;
+        _isLoadingChapters = false;
+
+        // Set a default chapter if available
+        if (_chapters.isNotEmpty) {
+          _selectedChapter =
+              _chapters.first.description; // Use the `name` field for display
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingChapters = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load chapters: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -519,10 +552,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
 
           // Chapter dropdown
-          _buildDropdownField(
+          _buildChapterDropdownField(
             label: 'Chapter',
             value: _selectedChapter,
-            items: const ['Marinduque', 'Manila', 'Cebu', 'Davao', 'Iloilo'],
+            items: _chapters,
             onChanged: (value) {
               setState(() {
                 _selectedChapter = value;
@@ -1097,6 +1130,73 @@ class _ProfilePageState extends State<ProfilePage> {
                   }).toList(),
               onChanged: onChanged,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChapterDropdownField({
+    required String label,
+    String? value,
+    required List<Chapter> items,
+    required Function(String?) onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Container(
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child:
+                _isLoadingChapters
+                    ? Center(child: CircularProgressIndicator())
+                    : DropdownButtonFormField<String>(
+                      value: value,
+                      style: const TextStyle(fontSize: 13),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      dropdownColor: Colors.white,
+                      isExpanded: true,
+                      hint: const Text(
+                        'Select Chapter',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      items:
+                          items.map((Chapter chapter) {
+                            return DropdownMenuItem<String>(
+                              value: chapter.description,
+                              child: Text(
+                                chapter.description ?? 'Unknown',
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                            );
+                          }).toList(),
+                      onChanged: onChanged,
+                    ),
           ),
         ],
       ),

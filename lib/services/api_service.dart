@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
 import '../models/event.dart';
 import '../models/country.dart';
-import '../models/chapter.dart'; // ✅ Import Chapter model
+import '../models/chapter.dart';
 
 class ApiService {
   static Future<List<dynamic>> fetchPRCLicense() async {
@@ -46,14 +46,9 @@ class ApiService {
     }
   }
 
-  // ✅ Fetch Chapter data
   static Future<List<Chapter>> fetchChapters() async {
     try {
-      final response = await http.get(
-        Uri.parse(
-          activeChapter,
-        ), // 🔁 Replaced chapterEndpoint with activeChapter
-      );
+      final response = await http.get(Uri.parse(activeChapter));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = jsonDecode(response.body);

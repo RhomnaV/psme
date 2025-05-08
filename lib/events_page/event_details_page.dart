@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import '../base_page.dart';
+import '../header_footer/base_page.dart';
 import 'event_registration_page.dart';
 import '../models/event.dart';
 import '../services/api_service.dart';

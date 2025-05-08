@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../base_page.dart';
+import '../header_footer/base_page.dart';
 import 'event_registration_professional_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:flutter/foundation.dart'; 
+import 'package:flutter/foundation.dart';
 import '../services/api_service.dart';
 import '../models/country.dart';
 
@@ -11,17 +11,15 @@ class EventRegistrationPage extends StatefulWidget {
   final String membershipType;
   final String membershipDisplay;
   final double membershipPrice;
-  final Map<String, dynamic> eventData; 
-  
+  final Map<String, dynamic> eventData;
 
   const EventRegistrationPage({
     super.key,
     required this.membershipType,
     required this.membershipDisplay,
     required this.membershipPrice,
-    required this.eventData, 
+    required this.eventData,
   });
-
 
   @override
   State<EventRegistrationPage> createState() => _EventRegistrationPageState();
@@ -54,28 +52,38 @@ class _EventRegistrationPageState extends State<EventRegistrationPage> {
     _loadCountries();
   }
 
-Future<void> _loadCountries() async {
-  List<Country> fetchedCountries = await ApiService.fetchCountry();
-  setState(() {
-    _countries = fetchedCountries;
-    _isLoading = false;
+  Future<void> _loadCountries() async {
+    List<Country> fetchedCountries = await ApiService.fetchCountry();
+    setState(() {
+      _countries = fetchedCountries;
+      _isLoading = false;
 
-    // Ensure the default country code is in the list
-    Country? defaultCountry = _countries.firstWhere(
-      (country) => country.mobileCode == "63",
-      orElse: () => _countries.isNotEmpty ? _countries.first : Country(id: 174, name: "Philippines", mobileCode: "63", code: "PH"),
-    );
+      // Ensure the default country code is in the list
+      Country? defaultCountry = _countries.firstWhere(
+        (country) => country.mobileCode == "63",
+        orElse:
+            () =>
+                _countries.isNotEmpty
+                    ? _countries.first
+                    : Country(
+                      id: 174,
+                      name: "Philippines",
+                      mobileCode: "63",
+                      code: "PH",
+                    ),
+      );
 
-    _selectedCountryCode = defaultCountry.code;
-  });
-}
+      _selectedCountryCode = defaultCountry.code;
+    });
+  }
 
-
-String countryCodeToEmoji(String countryCode) {
-  return countryCode.toUpperCase().split('').map((char) {
-    return String.fromCharCode(0x1F1E6 + char.codeUnitAt(0) - 'A'.codeUnitAt(0));
-  }).join();
-}
+  String countryCodeToEmoji(String countryCode) {
+    return countryCode.toUpperCase().split('').map((char) {
+      return String.fromCharCode(
+        0x1F1E6 + char.codeUnitAt(0) - 'A'.codeUnitAt(0),
+      );
+    }).join();
+  }
 
   Uint8List? _pwdImageBytes;
   File? _pwdImageFile; // For Mobile/Desktop
@@ -181,8 +189,8 @@ Future<void> _selectDate(BuildContext context) async {
   }
 
   Widget _buildRegistrationContent(BuildContext context) {
-    if (widget.eventData == null) { 
-    return const Center(child: CircularProgressIndicator());
+    if (widget.eventData == null) {
+      return const Center(child: CircularProgressIndicator());
     }
     return Container(
       color: Colors.white,
@@ -374,7 +382,7 @@ Future<void> _selectDate(BuildContext context) async {
 
                     const SizedBox(height: 16),
 
-                   // Mobile Number field with country code - DYNAMIC
+                    // Mobile Number field with country code - DYNAMIC
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -406,34 +414,53 @@ Future<void> _selectDate(BuildContext context) async {
                               Container(
                                 width: 110,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey.shade300),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(8),
                                     bottomLeft: Radius.circular(8),
                                   ),
                                 ),
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: _isLoading
-                                    ? Center(child: CircularProgressIndicator()) // Show loading
-                                    : DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        isExpanded: true,
-                                        value: _selectedCountryCode, // Ensure this exists in the list
-                                        items: _countries
-                                            .map((country) => DropdownMenuItem<String>(
-                                                  value: country.code, 
-                                                  child: Text("${countryCodeToEmoji(country.code)} ${country.mobileCode}"),
-                                                ))
-                                            .toList(),
-                                        onChanged: (String? value) {
-                                          if (value != null && value != _selectedCountryCode) {
-                                            setState(() {
-                                              _selectedCountryCode = value;
-                                            });
-                                          }
-                                        },
-                                      ),
-                                    ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                                child:
+                                    _isLoading
+                                        ? Center(
+                                          child: CircularProgressIndicator(),
+                                        ) // Show loading
+                                        : DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            isExpanded: true,
+                                            value:
+                                                _selectedCountryCode, // Ensure this exists in the list
+                                            items:
+                                                _countries
+                                                    .map(
+                                                      (
+                                                        country,
+                                                      ) => DropdownMenuItem<
+                                                        String
+                                                      >(
+                                                        value: country.code,
+                                                        child: Text(
+                                                          "${countryCodeToEmoji(country.code)} ${country.mobileCode}",
+                                                        ),
+                                                      ),
+                                                    )
+                                                    .toList(),
+                                            onChanged: (String? value) {
+                                              if (value != null &&
+                                                  value !=
+                                                      _selectedCountryCode) {
+                                                setState(() {
+                                                  _selectedCountryCode = value;
+                                                });
+                                              }
+                                            },
+                                          ),
+                                        ),
                               ),
                               // Phone number input
                               Expanded(
@@ -447,7 +474,9 @@ Future<void> _selectDate(BuildContext context) async {
                                         topRight: Radius.circular(8),
                                         bottomRight: Radius.circular(8),
                                       ),
-                                      borderSide: BorderSide(color: Colors.grey.shade300),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
                                     ),
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16,
@@ -534,35 +563,35 @@ Future<void> _selectDate(BuildContext context) async {
 
                     // PWD checkbox
                     Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Are you a Person with Disability? (PWD)",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Are you a Person with Disability? (PWD)",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: _isPWD,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    _isPWD = value ?? false;
-                                  });
-                                },
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _isPWD,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
                               ),
-                              const Text("Yes"),
-                            ],
-                          ),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isPWD = value ?? false;
+                                });
+                              },
+                            ),
+                            const Text("Yes"),
+                          ],
+                        ),
 
-                         if (_isPWD)
+                        if (_isPWD)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -570,7 +599,10 @@ Future<void> _selectDate(BuildContext context) async {
                               const Text(
                                 "Please provide a proof of PWD by uploading an image file "
                                 "(recommended file size: 3MB)",
-                                style: TextStyle(fontSize: 12, color: Colors.black),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
                               ),
                               const SizedBox(height: 8),
                               ElevatedButton.icon(
@@ -602,7 +634,7 @@ Future<void> _selectDate(BuildContext context) async {
                                 ),
                             ],
                           ),
-                        ],
+                      ],
                     ),
                   ],
                 ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'base_page.dart';
-import 'membership.dart';
+import '../../header_footer/base_page.dart';
+import '../membership.dart';
 import 'confirm_details.dart';
 
 class PsmeIdPage extends StatefulWidget {

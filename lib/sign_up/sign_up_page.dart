@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import '../../services/api_service.dart';
 import 'otp_verification_page.dart';
-import 'login_page.dart';
+import '../log_in_page/login_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SignUpPage extends StatefulWidget {

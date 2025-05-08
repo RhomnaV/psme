@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../base_page.dart';
+import '../header_footer/base_page.dart';
+import '../services/api_service.dart';
+import '../models/chapter.dart';
 import 'other_details.dart';
 import 'dart:typed_data';
 import 'dart:io';
@@ -22,7 +24,7 @@ class EventRegistrationProfessionalPage extends StatefulWidget {
   final Uint8List? pwdImageBytes;
   
   const EventRegistrationProfessionalPage({
-   super.key,
+    super.key,
     required this.membershipType,
     required this.membershipDisplay,
     required this.membershipPrice,
@@ -58,6 +60,44 @@ class _EventRegistrationProfessionalPageState
 
   // File upload
   bool _fileUploaded = false;
+
+  // Chapter-related variables
+  List<Chapter> _chapters = [];
+  String? _selectedChapter;
+  bool _isLoadingChapters = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChapters(); // Fetch the chapter list
+  }
+
+  Future<void> _loadChapters() async {
+    try {
+      List<Chapter> fetchedChapters = await ApiService.fetchChapters();
+
+      setState(() {
+        _chapters = fetchedChapters;
+        _isLoadingChapters = false;
+
+        // Set a default chapter if available
+        if (_chapters.isNotEmpty) {
+          _selectedChapter =
+              _chapters.first.name; // Use the `name` field for display
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingChapters = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load chapters: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   void _navigateToNextPage() {
     if (_formKey.currentState!.validate()) {
@@ -328,43 +368,16 @@ class _EventRegistrationProfessionalPageState
                             const SizedBox(height: 16),
 
                             // Chapter dropdown
-                            _buildLabeledField(
+                            _buildChapterDropdownField(
                               label:
                                   "Chapter (if none, please select one nearest to your residence or work)",
-                              required: true,
-                              field: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButtonFormField<String>(
-                                    decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12,
-                                      ),
-                                      border: InputBorder.none,
-                                    ),
-                                    hint: const Text("Select Chapter"),
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    isExpanded: true,
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: "Manila",
-                                        child: Text("Manila"),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: "Quezon City",
-                                        child: Text("Quezon City"),
-                                      ),
-                                    ],
-                                    onChanged: (value) {},
-                                  ),
-                                ),
-                              ),
+                              value: _selectedChapter,
+                              items: _chapters,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedChapter = value;
+                                });
+                              },
                               errorText: "Chapter Required.",
                             ),
 
@@ -523,43 +536,16 @@ class _EventRegistrationProfessionalPageState
                             const SizedBox(height: 16),
 
                             // Chapter dropdown
-                            _buildLabeledField(
+                            _buildChapterDropdownField(
                               label:
                                   "Chapter (if none, please select one nearest to your residence or work)",
-                              required: true,
-                              field: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButtonFormField<String>(
-                                    decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12,
-                                      ),
-                                      border: InputBorder.none,
-                                    ),
-                                    hint: const Text("Select Chapter"),
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    isExpanded: true,
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: "Manila",
-                                        child: Text("Manila"),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: "Quezon City",
-                                        child: Text("Quezon City"),
-                                      ),
-                                    ],
-                                    onChanged: (value) {},
-                                  ),
-                                ),
-                              ),
+                              value: _selectedChapter,
+                              items: _chapters,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedChapter = value;
+                                });
+                              },
                               errorText: "Chapter Required.",
                             ),
 
@@ -725,43 +711,16 @@ class _EventRegistrationProfessionalPageState
                             const SizedBox(height: 16),
 
                             // Chapter dropdown
-                            _buildLabeledField(
+                            _buildChapterDropdownField(
                               label:
                                   "Chapter (if none, please select one nearest to your residence or work)",
-                              required: true,
-                              field: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButtonFormField<String>(
-                                    decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12,
-                                      ),
-                                      border: InputBorder.none,
-                                    ),
-                                    hint: const Text("Select Chapter"),
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    isExpanded: true,
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: "Manila",
-                                        child: Text("Manila"),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: "Quezon City",
-                                        child: Text("Quezon City"),
-                                      ),
-                                    ],
-                                    onChanged: (value) {},
-                                  ),
-                                ),
-                              ),
+                              value: _selectedChapter,
+                              items: _chapters,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedChapter = value;
+                                });
+                              },
                               errorText: "Chapter Required.",
                             ),
 
@@ -887,6 +846,79 @@ class _EventRegistrationProfessionalPageState
         ),
         const SizedBox(height: 8),
         field,
+        if (errorText != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              errorText,
+              style: TextStyle(fontSize: 12, color: Colors.red.shade700),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildChapterDropdownField({
+    required String label,
+    String? value,
+    required List<Chapter> items,
+    required Function(String?) onChanged,
+    String? errorText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            text: label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            children: const [
+              TextSpan(
+                text: " *",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child:
+              _isLoadingChapters
+                  ? Center(child: CircularProgressIndicator())
+                  : DropdownButtonFormField<String>(
+                    value: value,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                    dropdownColor: Colors.white,
+                    isExpanded: true,
+                    hint: const Text("Select Chapter"),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items:
+                        items.map((Chapter chapter) {
+                          return DropdownMenuItem<String>(
+                            value: chapter.name,
+                            child: Text(chapter.description ?? 'Unknown'),
+                          );
+                        }).toList(),
+                    onChanged: onChanged,
+                  ),
+        ),
         if (errorText != null)
           Padding(
             padding: const EdgeInsets.only(top: 4.0),

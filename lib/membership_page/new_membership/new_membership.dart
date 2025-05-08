@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'base_page.dart';
+import '../../header_footer/base_page.dart';
 import 'profession_details.dart';
+import '../../services/api_service.dart';
+import '../../models/chapter.dart';
 
 class NewMembershipPage extends StatefulWidget {
   const NewMembershipPage({super.key});
@@ -11,6 +13,44 @@ class NewMembershipPage extends StatefulWidget {
 
 class _NewMembershipPageState extends State<NewMembershipPage> {
   final _membershipTypeController = TextEditingController();
+
+  // Chapter-related variables
+  List<Chapter> _chapters = [];
+  String? _selectedChapter;
+  bool _isLoadingChapters = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChapters(); // Fetch the chapter list
+  }
+
+  Future<void> _loadChapters() async {
+    try {
+      List<Chapter> fetchedChapters = await ApiService.fetchChapters();
+
+      setState(() {
+        _chapters = fetchedChapters;
+        _isLoadingChapters = false;
+
+        // Set a default chapter if available
+        if (_chapters.isNotEmpty) {
+          _selectedChapter =
+              _chapters.first.name; // Use the `name` field for display
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingChapters = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load chapters: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -111,68 +151,16 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
 
                 const SizedBox(height: 16),
 
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: const [
-                        Text(
-                          'Chapter',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          ' *',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                            ),
-                            border: InputBorder.none,
-                          ),
-                          icon: const Icon(Icons.keyboard_arrow_down),
-                          hint: const Text('Select chapter'),
-                          isExpanded: true,
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'Manila',
-                              child: Text('Manila'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Cebu',
-                              child: Text('Cebu'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Davao',
-                              child: Text('Davao'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Marinduque',
-                              child: Text('Marinduque'),
-                            ),
-                          ],
-                          onChanged: (value) {},
-                        ),
-                      ),
-                    ),
-                  ],
+                // Chapter dropdown
+                _buildChapterDropdownField(
+                  label: 'Chapter',
+                  value: _selectedChapter,
+                  items: _chapters,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedChapter = value;
+                    });
+                  },
                 ),
 
                 const SizedBox(height: 24),
@@ -473,6 +461,65 @@ class _NewMembershipPageState extends State<NewMembershipPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildChapterDropdownField({
+    required String label,
+    String? value,
+    required List<Chapter> items,
+    required Function(String?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+            const Text(
+              ' *',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child:
+              _isLoadingChapters
+                  ? Center(child: CircularProgressIndicator())
+                  : DropdownButtonFormField<String>(
+                    value: value,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                      border: InputBorder.none,
+                    ),
+                    dropdownColor: Colors.white,
+                    isExpanded: true,
+                    hint: const Text('Select chapter'),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items:
+                        items.map((Chapter chapter) {
+                          return DropdownMenuItem<String>(
+                            value: chapter.name,
+                            child: Text(chapter.description ?? 'Unknown'),
+                          );
+                        }).toList(),
+                    onChanged: onChanged,
+                  ),
+        ),
+      ],
     );
   }
 }

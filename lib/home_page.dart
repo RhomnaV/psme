@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'base_page.dart';
+import 'header_footer/base_page.dart';
 import 'events_page/events_page.dart';
-import 'sign_up_page.dart';
+import 'sign_up/sign_up_page.dart';
 import '../services/api_service.dart';
 import '../models/event.dart';
 import '../events_page/event_details_page.dart';

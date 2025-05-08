@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../header_footer/base_page.dart';
+import '../header_footer/profile_header.dart';
 import 'new_membership/new_membership.dart';
 import '../shared_state.dart';
 import 'active_membership_page.dart';
@@ -41,25 +42,9 @@ class _MembershipPageState extends State<MembershipPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
                     children: [
-                      const SizedBox(height: 30),
-                      const CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.white,
-                        backgroundImage: AssetImage('assets/profile.jpg'),
-                      ),
-
-                      const SizedBox(height: 16),
-                      const Text(
-                        'KEVIN PARK',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const Text(
-                        'kevin@gmail.com',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      const ProfileHeader(
+                        name: 'KEVIN PARK',
+                        email: 'kevin@gmail.com',
                       ),
 
                       const SizedBox(height: 30),

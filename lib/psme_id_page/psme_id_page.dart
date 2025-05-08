@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../header_footer/base_page.dart';
+import '../header_footer/profile_header.dart';
 import '../membership_page/active_membership_page.dart';
 import '../cogs_page/cogs_page.dart';
 import 'psme_id_upload_preview.dart';
@@ -99,20 +100,10 @@ class _PsmeIdPageState extends State<PsmeIdPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Profile section
-              const SizedBox(height: 24),
-              const CircleAvatar(
-                radius: 40,
-                backgroundImage: AssetImage('assets/profile.jpg'),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'KEVIN PARK',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                'kevinpark@gmail.com',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+              // Reusable Profile Header
+              const ProfileHeader(
+                name: 'KEVIN PARK',
+                email: 'kevinpark@gmail.com',
               ),
 
               // Membership tabs

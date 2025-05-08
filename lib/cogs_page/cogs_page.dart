@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../header_footer/base_page.dart';
 import '../membership_page/active_membership_page.dart';
 import '../psme_id_page/psme_id_page.dart';
+import '../header_footer/profile_header.dart';
 
 class CogsPage extends StatefulWidget {
   const CogsPage({super.key});
@@ -292,29 +293,15 @@ class _CogsPageState extends State<CogsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Use BasePage for consistent layout
     return BasePage(
-      selectedIndex: 2,
-      body: Container(
-        color: Colors.white,
-        width: double.infinity,
-        height: double.infinity,
-        child: SingleChildScrollView(
+      selectedIndex: 1, // Profile tab
+      body: SingleChildScrollView(
+        child: Container(
+          color: Colors.white,
           child: Column(
             children: [
-              const SizedBox(height: 24),
-              const CircleAvatar(
-                radius: 40,
-                backgroundImage: AssetImage('assets/profile.jpg'),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'KEVIN PARK',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                'kevinpark@gmail.com',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
+              const ProfileHeader(name: 'KEVIN PARK', email: 'kevin@gmail.com'),
 
               const SizedBox(height: 24),
               _buildMembershipTabs(),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../header_footer/base_page.dart';
+import '../header_footer/profile_header.dart';
 import '../psme_id_page/psme_id_page.dart';
 import '../cogs_page/cogs_page.dart';
 
@@ -117,22 +118,10 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 24),
-              const CircleAvatar(
-                radius: 40,
-                backgroundImage: AssetImage('assets/profile.jpg'),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'KEVIN PARK',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                'kevinpark@gmail.com',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
+              const ProfileHeader(name: 'KEVIN PARK', email: 'kevin@gmail.com'),
 
               const SizedBox(height: 24),
+
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
                 decoration: BoxDecoration(
@@ -229,6 +218,8 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
               ),
 
               const SizedBox(height: 24),
+
+              // Membership Details Section
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
                 width: double.infinity,
@@ -292,6 +283,8 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                           ),
 
                           const SizedBox(height: 24),
+
+                          // Membership Details
                           Row(
                             children: [
                               const Icon(
@@ -320,6 +313,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                           ),
 
                           const SizedBox(height: 16),
+
                           Row(
                             children: [
                               const Icon(
@@ -348,6 +342,7 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                           ),
 
                           const SizedBox(height: 16),
+
                           Row(
                             children: [
                               const Icon(
@@ -379,6 +374,8 @@ class _ActiveMembershipPageState extends State<ActiveMembershipPage> {
                     ),
 
                     const SizedBox(height: 24),
+
+                    // Certificate Buttons
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),

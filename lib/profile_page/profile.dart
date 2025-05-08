@@ -6,6 +6,7 @@ import 'profile_professional.dart';
 import '../services/api_service.dart';
 import '../models/country.dart';
 import '../models/chapter.dart';
+import '../header_footer/profile_header.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -193,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             children: [
               // User profile section
-              _buildUserProfileSection(),
+              const ProfileHeader(name: 'KEVIN PARK', email: 'kevin@gmail.com'),
 
               // Personal/Professional tabs - using the format you provided
               _buildTabSwitcher(),

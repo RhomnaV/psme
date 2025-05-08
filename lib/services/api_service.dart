@@ -1,22 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/event.dart'; // Ensure Event model is imported
+
+import '../utils/constants.dart';
+import '../models/event.dart';
 import '../models/country.dart';
+import '../models/chapter.dart'; // ✅ Import Chapter model
 
 class ApiService {
-  // GET Request
-  // static Future<List<dynamic>> fetchUsers() async {
-  //   final response = await http.get(Uri.parse(verifyOTP));
-
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Failed to load users');
-  //   }
-  // }
-
   static Future<List<dynamic>> fetchPRCLicense() async {
     try {
       final response = await http.get(Uri.parse(activePrcLicenceType));
@@ -55,6 +46,31 @@ class ApiService {
     }
   }
 
+  // ✅ Fetch Chapter data
+  static Future<List<Chapter>> fetchChapters() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          activeChapter,
+        ), // 🔁 Replaced chapterEndpoint with activeChapter
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+        if (jsonData.containsKey('resultKey') && jsonData['resultKey'] == 1) {
+          return (jsonData['resultValue'] as List)
+              .map((json) => Chapter.fromJson(json as Map<String, dynamic>))
+              .toList();
+        }
+      }
+      throw Exception('Failed to fetch Chapter data');
+    } catch (e) {
+      print("Error fetching Chapters: $e");
+      return [];
+    }
+  }
+
   static Future<List<Event>> _fetchEventsFromAPI(
     String url, {
     bool singleEvent = false,
@@ -68,7 +84,6 @@ class ApiService {
         if (jsonData.containsKey('resultKey') && jsonData['resultKey'] == 1) {
           final dynamic resultValue = jsonData['resultValue'];
 
-          // Ensure resultValue is always a List
           final List<dynamic> eventList =
               (resultValue is List) ? resultValue : [resultValue];
 
@@ -87,7 +102,6 @@ class ApiService {
     }
   }
 
-  // ✅ Fetch all events
   static Future<List<Event>> fetchEvents() async {
     return await _fetchEventsFromAPI(events);
   }
@@ -100,7 +114,6 @@ class ApiService {
     return events.isNotEmpty ? events.first : null;
   }
 
-  // POST Request
   static Future<Map<String, dynamic>> loginUser(
     String email,
     String password,
@@ -136,7 +149,6 @@ class ApiService {
     }
   }
 
-  // Save session data in SharedPreferences
   static Future<void> _setSession(Map<String, dynamic> userData) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -148,7 +160,6 @@ class ApiService {
     }
   }
 
-  // Retrieve session data
   static Future<Map<String, dynamic>?> getSession() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -176,15 +187,13 @@ class ApiService {
   static Future<Map<String, dynamic>> sendOTPUser(String email) async {
     try {
       final response = await http.post(
-        Uri.parse(sendOTP), // Ensure `sendOTP` is a valid API URL
+        Uri.parse(sendOTP),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"emailid": email}),
       );
 
-      // ✅ Decode JSON response
       final Map<String, dynamic> jsonData = jsonDecode(response.body);
 
-      // ✅ Check if `resultKey` exists and equals 1
       if (jsonData.containsKey('resultKey') && jsonData['resultKey'] == 1) {
         return jsonData;
       } else {
@@ -204,20 +213,17 @@ class ApiService {
   ) async {
     try {
       final response = await http.post(
-        Uri.parse(verifyOTP), // Ensure `verifyOTP` is a valid API URL
+        Uri.parse(verifyOTP),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"emailid": email, "otp": otp}),
       );
 
-      // ✅ Decode JSON response
       final Map<String, dynamic> jsonData = jsonDecode(response.body);
 
-      // ✅ Debug the response
       print("🔍 API Response: $jsonData");
 
-      // ✅ Check if `resultKey` exists and equals 1
       if (jsonData.containsKey('resultKey') && jsonData['resultKey'] == 1) {
-        return jsonData; // OTP verified successfully
+        return jsonData;
       } else {
         return {
           "success": false,
